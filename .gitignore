@@ -1,0 +1,39 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Code coverage
+lcov.info
+
+# Performance
+perf.data*
+flamegraph.svg
+
+# Output folders
+.output
+decoder/target
+decoder/pkg
+
+# Node and WXT
+node_modules
+stats.html
+stats-*.json
+.wxt
+web-ext.config.ts
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.errorviz-version

@@ -1,0 +1,120 @@
+import "@/assets/player.css";
+
+import { mount, unmount } from "svelte";
+import { browser } from "wxt/browser";
+import { type ContentScriptContext, createShadowRootUi } from "wxt/client";
+import { defineContentScript } from "wxt/sandbox";
+
+import PlayerLoader from "@/components/PlayerLoader.svelte";
+import { getOptions } from "@/utils/options";
+
+import { type RightClickMessage } from "./background";
+
+export default defineContentScript({
+  matches: ["<all_urls>"],
+  cssInjectionMode: "ui",
+
+  async main(ctx) {
+    let rightClickTarget: EventTarget | null = null;
+    if (!import.meta.env.FIREFOX) {
+      ctx.addEventListener(document, "contextmenu", (evt) => {
+        rightClickTarget = evt.target;
+      });
+    }
+
+    browser.runtime.onMessage.addListener(async (maybeMessage, sender) => {
+      if (sender.id !== browser.runtime.id) return;
+
+      const message = maybeMessage as Partial<RightClickMessage>;
+      if (message.name !== "right-click") return;
+
+      const imageElement =
+        message.targetElementId !== undefined
+          ? browser.menus.getTargetElement(message.targetElementId)
+          : rightClickTarget;
+
+      if (imageElement === null || !(imageElement instanceof HTMLImageElement)) return;
+
+      const ui = await createPlayer(ctx, imageElement, imageElement.src);
+      ui.mount();
+    });
+  },
+});
+
+async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgSrc: string) {
+  function removeSelf() {
+    ui?.remove();
+  }
+
+  const options = await getOptions();
+  const { width, height } = target.getBoundingClientRect();
+
+  let shouldRestoreDraggable = false;
+
+  const ui = await createShadowRootUi(ctx, {
+    name: "gif-viewer",
+    position: "inline",
+    anchor: target,
+
+    isolateEvents: true,
+
+    append: (anchor, shadowHost) => {
+      const style = window.getComputedStyle(anchor);
+
+      if (shadowHost instanceof HTMLElement) {
+        shadowHost.style.position = style.position;
+        shadowHost.style.inset = style.inset;
+        shadowHost.style.margin = style.margin;
+        shadowHost.style.padding = style.padding;
+        shadowHost.style.border = style.border;
+        shadowHost.style.background = style.background;
+        shadowHost.style.width = `${width}px`;
+        shadowHost.style.height = `${height}px`;
+        shadowHost.style.minHeight = "60px";
+        shadowHost.style.display = style.display === "inline" ? "inline-block" : style.display;
+        shadowHost.style.boxSizing = "border-box";
+        // shadowHost.style.boxSizing = style.boxSizing;
+        /*for (const key of style) {
+          shadowHost.style.setProperty(
+            key,
+            style.getPropertyValue(key),
+            style.getPropertyPriority(key)
+          );
+        }*/
+      }
+
+      if (anchor.parentElement?.nodeName === "A" && anchor.parentElement.draggable) {
+        anchor.parentElement.draggable = false;
+        shouldRestoreDraggable = true;
+      }
+
+      anchor.replaceWith(shadowHost);
+    },
+
+    onMount: (container) => {
+      const app = mount(PlayerLoader, {
+        target: container,
+        props: {
+          source: imgSrc,
+          options,
+          unmount: removeSelf,
+        },
+      });
+      return app;
+    },
+
+    onRemove: (app) => {
+      if (app === undefined) {
+        throw new Error("Cannot unmount svelte component since it is undefined!");
+      }
+      unmount(app);
+      ui.shadowHost.replaceWith(target);
+
+      if (shouldRestoreDraggable && target.parentElement) {
+        target.parentElement.draggable = true;
+      }
+    },
+  });
+
+  return ui;
+}

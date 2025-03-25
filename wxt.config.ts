@@ -1,0 +1,52 @@
+import { resolve } from "node:path";
+
+import { defineConfig } from "wxt";
+
+import { WASM_NAME } from "./webextension/utils/constants";
+
+// See https://wxt.dev/api/config.html
+export default defineConfig({
+  modules: ["@wxt-dev/module-svelte"],
+  srcDir: "webextension",
+  // extensionApi: "webextension-polyfill",
+  extensionApi: "chrome",
+
+  imports: false,
+
+  manifest: ({ browser }) => ({
+    name: "Gif Controls",
+    permissions: [browser === "firefox" ? "menus" : "contextMenus", "storage", "downloads"],
+    host_permissions: ["<all_urls>"],
+    // content_security_policy: {
+    //   extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
+    // },
+
+    web_accessible_resources: [
+      {
+        matches: ["<all_urls>"],
+        resources: [`/${WASM_NAME}`],
+      },
+    ],
+  }),
+
+  hooks: {
+    // Add decoder WASM to public assets
+    "build:publicAssets": (_wxt, files) => {
+      files.push({
+        absoluteSrc: resolve("./decoder/pkg/gif_controls_decoder_bg.wasm"),
+        relativeDest: WASM_NAME,
+      });
+    },
+
+    // Add decoder WASM to public paths
+    "prepare:publicPaths": (_wxt, paths) => {
+      paths.push(WASM_NAME);
+    },
+  },
+
+  runner: {
+    startUrls: [
+      "https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif",
+    ],
+  },
+});
