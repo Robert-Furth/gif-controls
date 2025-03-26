@@ -69,14 +69,6 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
         shadowHost.style.minHeight = "60px";
         shadowHost.style.display = style.display === "inline" ? "inline-block" : style.display;
         shadowHost.style.boxSizing = "border-box";
-        // shadowHost.style.boxSizing = style.boxSizing;
-        /*for (const key of style) {
-          shadowHost.style.setProperty(
-            key,
-            style.getPropertyValue(key),
-            style.getPropertyPriority(key)
-          );
-        }*/
       }
 
       if (anchor.parentElement?.nodeName === "A" && anchor.parentElement.draggable) {
