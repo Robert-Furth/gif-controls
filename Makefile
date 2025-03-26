@@ -4,6 +4,9 @@ else
 	RM := rm -rf
 endif
 
+# Source: https://stackoverflow.com/a/12959764
+rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
+
 .PHONY: all clean
 all: firefox chrome
 clean: clean-decoder clean-extension
@@ -19,7 +22,7 @@ clean-decoder:
 	-$(RM) decoder/pkg
 	-cd decoder && cargo clean
 
-EXTENSION_DEPS := $(WASM_FILE) node_modules $(wildcard webextension/**/*) wxt.config.ts tsconfig.json
+EXTENSION_DEPS := $(WASM_FILE) node_modules $(call rwildcard,webextension/,*) wxt.config.ts tsconfig.json
 
 .PHONY: firefox chrome clean-extension
 firefox: .output/firefox-mv2
