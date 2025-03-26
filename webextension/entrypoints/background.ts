@@ -5,7 +5,7 @@ import { RightClickMessage } from "@/utils/messages";
 
 const menus = import.meta.env.FIREFOX ? browser.menus : browser.contextMenus;
 
-function menuListener(info: Menus.OnClickData, tab?: Tabs.Tab) {
+function addControlsListener(info: Menus.OnClickData, tab?: Tabs.Tab) {
   if (tab?.id === undefined || info.menuItemId !== "add-gif-controls") return;
 
   const message: RightClickMessage = {
@@ -17,7 +17,7 @@ function menuListener(info: Menus.OnClickData, tab?: Tabs.Tab) {
 }
 
 export default defineBackground(() => {
-  menus.onClicked.addListener(menuListener);
+  menus.onClicked.addListener(addControlsListener);
 
   browser.runtime.onInstalled.addListener(() => {
     menus.create({
