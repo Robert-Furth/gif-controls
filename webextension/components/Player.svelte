@@ -7,7 +7,6 @@
   import iconRevert from "@/assets/player-icons/revert.svg";
 
   import { onDestroy, onMount } from "svelte";
-  import { browser } from "wxt/browser";
 
   import { DecodedGif } from "@@/decoder/pkg/gif_controls_decoder";
 
@@ -124,25 +123,6 @@
     }
     return secsStr;
   }
-
-  /* function downloadFrame() {
-    canvas.toBlob(async (blob) => {
-      if (blob === null) {
-        console.log("error");
-        return;
-      }
-
-      const suffixLen = gif.numFrames.toString().length;
-      const suffix = (frameIndex + 1).toString().padStart(suffixLen, "0");
-
-      const url = URL.createObjectURL(blob);
-      try {
-        browser.downloads.download({ url, filename: `frame-${suffix}.png` });
-      } finally {
-        URL.revokeObjectURL(url);
-      }
-    });
-  } */
 </script>
 
 <canvas bind:this={canvas}></canvas>
@@ -151,7 +131,7 @@
   <IconButton title="Options" src={iconOptions} onclick={() => (optionsOpen = !optionsOpen)} />
   {#if optionsOpen}
     <div style="position: relative; align-self: flex-start;">
-      <Options bind:speedFactor bind:counterType {isPaused} />
+      <Options bind:speedFactor bind:counterType />
     </div>
   {/if}
 </div>

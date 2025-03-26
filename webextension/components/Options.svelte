@@ -6,16 +6,8 @@
   type Props = {
     speedFactor?: number;
     counterType?: CounterType;
-    isPaused: boolean;
-    // downloadFrame: () => void;
   } & Record<string, any>;
-  let {
-    speedFactor = $bindable(1),
-    counterType = $bindable("frame"),
-    isPaused,
-    // downloadFrame,
-    ...rest
-  }: Props = $props();
+  let { speedFactor = $bindable(1), counterType = $bindable("frame"), ...rest }: Props = $props();
 </script>
 
 <div transition:slide={{ axis: "x" }} class="options-dropdown" {...rest}>
@@ -32,7 +24,4 @@
       <option value="none">None</option>
     </select>
   </div>
-  <!-- <div class="span">
-    <button disabled={!isPaused} onclick={downloadFrame}>Download Frame</button>
-  </div> -->
 </div>

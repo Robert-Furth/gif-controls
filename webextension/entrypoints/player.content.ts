@@ -2,13 +2,12 @@ import "@/assets/player.css";
 
 import { mount, unmount } from "svelte";
 import { browser } from "wxt/browser";
-import { type ContentScriptContext, createShadowRootUi } from "wxt/client";
+import { ContentScriptContext, createShadowRootUi } from "wxt/client";
 import { defineContentScript } from "wxt/sandbox";
 
 import PlayerLoader from "@/components/PlayerLoader.svelte";
+import { isMessage } from "@/utils/messages";
 import { getOptions } from "@/utils/options";
-
-import { type RightClickMessage } from "./background";
 
 export default defineContentScript({
   matches: ["<all_urls>"],
@@ -22,21 +21,18 @@ export default defineContentScript({
       });
     }
 
-    browser.runtime.onMessage.addListener(async (maybeMessage, sender) => {
+    browser.runtime.onMessage.addListener((message, sender) => {
       if (sender.id !== browser.runtime.id) return;
-
-      const message = maybeMessage as Partial<RightClickMessage>;
-      if (message.name !== "right-click") return;
+      if (!isMessage(message) || message.name !== "right-click") return;
 
       const imageElement =
         message.targetElementId !== undefined
           ? browser.menus.getTargetElement(message.targetElementId)
           : rightClickTarget;
 
-      if (imageElement === null || !(imageElement instanceof HTMLImageElement)) return;
+      if (!(imageElement instanceof HTMLImageElement)) return;
 
-      const ui = await createPlayer(ctx, imageElement, imageElement.src);
-      ui.mount();
+      return createPlayer(ctx, imageElement, imageElement.src).then((ui) => ui.mount());
     });
   },
 });

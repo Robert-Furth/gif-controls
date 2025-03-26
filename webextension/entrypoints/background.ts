@@ -1,24 +1,23 @@
-import { browser } from "wxt/browser";
+import { browser, Menus, Tabs } from "wxt/browser";
 import { defineBackground } from "wxt/sandbox";
 
-export type RightClickMessage = {
-  name: "right-click";
-  targetElementId?: number;
-};
+import { RightClickMessage } from "@/utils/messages";
 
 const menus = import.meta.env.FIREFOX ? browser.menus : browser.contextMenus;
 
+function menuListener(info: Menus.OnClickData, tab?: Tabs.Tab) {
+  if (tab?.id === undefined || info.menuItemId !== "add-gif-controls") return;
+
+  const message: RightClickMessage = {
+    name: "right-click",
+    targetElementId: info.targetElementId, // undefined for chrome
+  };
+
+  browser.tabs.sendMessage(tab.id, message);
+}
+
 export default defineBackground(() => {
-  menus.onClicked.addListener(async (info, tab) => {
-    if (!tab?.id || info.menuItemId !== "add-gif-controls") return;
-
-    const message: RightClickMessage = { name: "right-click", targetElementId: undefined };
-    if (import.meta.env.FIREFOX) {
-      message.targetElementId = info.targetElementId;
-    }
-
-    browser.tabs.sendMessage(tab.id, message);
-  });
+  menus.onClicked.addListener(menuListener);
 
   browser.runtime.onInstalled.addListener(() => {
     menus.create({
