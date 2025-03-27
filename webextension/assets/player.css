@@ -27,6 +27,7 @@ body {
 
   font-weight: bold;
   text-align: center;
+  background-size: cover;
 }
 
 canvas {
