@@ -6,12 +6,12 @@
   import init, { decode } from "@@/decoder/pkg/gif_controls_decoder";
 
   import { WASM_NAME } from "@/utils/constants";
-  import type { ExtensionOptions } from "@/utils/options";
+  import type { PlayerOptions } from "@/utils/options";
 
   import IconButton from "./IconButton.svelte";
   import Player from "./Player.svelte";
 
-  type Props = { source: string; options: ExtensionOptions; unmount: () => void };
+  type Props = { source: string; options: PlayerOptions; unmount: () => void };
   let { source, options, unmount }: Props = $props();
 
   function stopEvent(e: Event) {

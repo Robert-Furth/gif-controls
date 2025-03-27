@@ -10,7 +10,7 @@
 
   import { DecodedGif } from "@@/decoder/pkg/gif_controls_decoder";
 
-  import type { ExtensionOptions } from "@/utils/options";
+  import type { PlayerOptions } from "@/utils/options";
 
   import IconButton from "./IconButton.svelte";
   import Options from "./Options.svelte";
@@ -20,7 +20,7 @@
     gif: DecodedGif;
     frameArr: ImageData[];
     unmount: () => void;
-    options: ExtensionOptions;
+    options: PlayerOptions;
   };
   let { gif, frameArr, unmount, options }: Props = $props();
 

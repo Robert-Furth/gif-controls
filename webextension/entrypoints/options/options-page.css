@@ -1,0 +1,48 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  background-color: white;
+  color: black;
+  --subtle-text: #555;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #21262d;
+    color: white;
+    --subtle-text: #aaa;
+  }
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  row-gap: 0.5em;
+  column-gap: 0.5em;
+}
+
+.opt-name {
+  text-align: right;
+  grid-column: 1;
+}
+
+.opt-desc {
+  font-style: italic;
+  color: var(--subtle-text);
+  margin-left: 0.75em;
+  grid-column: 4;
+}
+
+.invalid {
+  box-shadow: 0 0 10px red;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 5em;
+}
+
+#min-width,
+#min-height {
+  width: 3em;
+}

@@ -7,7 +7,7 @@ import { defineContentScript } from "wxt/sandbox";
 
 import PlayerLoader from "@/components/PlayerLoader.svelte";
 import { isMessage } from "@/utils/messages";
-import { getOptions } from "@/utils/options";
+import { opts, PlayerOptions } from "@/utils/options";
 
 export default defineContentScript({
   matches: ["<all_urls>"],
@@ -42,7 +42,9 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
     ui?.remove();
   }
 
-  const options = await getOptions();
+  const options: PlayerOptions = {
+    defaultCounterType: await opts.defaultCounterType.getValue(),
+  };
   const { width, height } = target.getBoundingClientRect();
 
   let shouldRestoreDraggable = false;
