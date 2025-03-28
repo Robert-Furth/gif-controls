@@ -8,8 +8,6 @@ import { DECODE_WORKER_PATH, WASM_NAME } from "./webextension/lib/constants";
 export default defineConfig({
   modules: ["@wxt-dev/module-svelte"],
   srcDir: "webextension",
-  // extensionApi: "webextension-polyfill",
-  // extensionApi: "chrome",
 
   imports: false,
 

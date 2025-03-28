@@ -20,7 +20,6 @@
     "@tsconfig/svelte": "^5.0.4",
     "@types/chrome": "^0.0.280",
     "@wxt-dev/module-svelte": "^2.0.3",
-    "globals": "^16.0.0",
     "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.3.3",
     "svelte": "^5.23.0",

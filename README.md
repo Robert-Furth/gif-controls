@@ -21,7 +21,7 @@ make chrome   # To generate the Chrome version of the extension
 Or, to generate both versions:
 
 ```bash
-make all
+make all  # Or just `make`
 ```
 
 The built extension will be in `.output/<browser>-<manifestVersion>/`. For
