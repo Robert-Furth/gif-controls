@@ -7,10 +7,10 @@
   import iconRevert from "@/assets/player-icons/revert.svg";
 
   import { onMount } from "svelte";
-  import { Unwatch } from "wxt/storage";
+  import { type Unwatch } from "wxt/storage";
 
-  import { Gif } from "@/lib/gif";
-  import { CounterType, opts } from "@/lib/options";
+  import { type Gif } from "@/lib/gif";
+  import { type CounterType, opts } from "@/lib/options";
 
   import IconButton from "./IconButton.svelte";
   import Options from "./Options.svelte";

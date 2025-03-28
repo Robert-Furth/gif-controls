@@ -4,9 +4,9 @@
   import { onDestroy } from "svelte";
   import { browser } from "wxt/browser";
 
-  import { WorkerInput, WorkerOutput } from "@/entrypoints/worker";
+  import type { WorkerInput, WorkerOutput } from "@/entrypoints/worker";
   import { DECODE_WORKER_PATH, WASM_NAME } from "@/lib/constants";
-  import { decode, Gif, prepareImageData } from "@/lib/gif";
+  import { decode, type Gif, prepareImageData } from "@/lib/gif";
   import { opts } from "@/lib/options";
 
   import IconButton from "./IconButton.svelte";
