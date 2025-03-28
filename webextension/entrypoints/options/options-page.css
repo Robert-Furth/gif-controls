@@ -1,6 +1,8 @@
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
+  padding: 0;
+
   background-color: white;
   color: black;
   --subtle-text: #555;
@@ -31,6 +33,10 @@ body {
   color: var(--subtle-text);
   margin-left: 0.75em;
   grid-column: 4;
+
+  em {
+    font-style: normal;
+  }
 }
 
 .invalid {

@@ -2,7 +2,7 @@ import { mount } from "svelte";
 import { WxtStorageItem } from "wxt/storage";
 
 // import OptionsPage from "@/components/options-page/OptionsPage.svelte";
-import { CounterType, opts } from "@/utils/options";
+import { CounterType, opts } from "@/lib/options";
 
 // mount(OptionsPage, { target: document.body });
 
@@ -10,29 +10,25 @@ interface ToString {
   toString: () => string;
 }
 
-function bindOption<T extends ToString>(options: {
+type BindOptionParams<T> = {
   elementId: string;
   storageItem: WxtStorageItem<T, Record<string, unknown>>;
   resetId?: string;
-  converter: (value: string) => undefined | T;
-  invalidMessage?: string;
-}) {
-  const {
-    elementId,
-    storageItem,
-    resetId,
-    converter: converter,
-    invalidMessage = "Invalid.",
-  } = options;
+};
+
+function bindOption<T extends ToString>(
+  options: BindOptionParams<T> & {
+    converter: (value: string) => undefined | T;
+    invalidMessage?: string;
+  },
+) {
+  const { elementId, storageItem, resetId, converter, invalidMessage = "Invalid." } = options;
   const element = document.getElementById(elementId);
 
   if (!(element instanceof HTMLInputElement) && !(element instanceof HTMLSelectElement))
     throw new Error();
 
-  storageItem.getValue().then((val) => {
-    console.log("default", val);
-    element.value = val.toString();
-  });
+  storageItem.getValue().then((val) => (element.value = val.toString()));
 
   element.addEventListener("input", () => {
     const val = converter(element.value);
@@ -55,6 +51,29 @@ function bindOption<T extends ToString>(options: {
   resetButton.addEventListener("click", () => {
     storageItem.setValue(storageItem.fallback);
     element.value = storageItem.fallback.toString();
+  });
+}
+
+function bindCheckbox(options: BindOptionParams<boolean> & { invert?: boolean }) {
+  const { elementId, storageItem, resetId, invert } = options;
+  const element = document.getElementById(elementId);
+
+  if (!(element instanceof HTMLInputElement)) throw new Error();
+  const inv = (v: boolean) => (invert ? !v : v);
+
+  storageItem.getValue().then((val) => (element.checked = inv(val)));
+
+  element.addEventListener("input", () => {
+    storageItem.setValue(inv(element.checked));
+  });
+
+  if (!resetId) return;
+  const resetButton = document.getElementById(resetId);
+  if (!resetButton) return;
+
+  resetButton.addEventListener("click", () => {
+    storageItem.setValue(storageItem.fallback);
+    element.checked = inv(storageItem.fallback);
   });
 }
 
@@ -106,4 +125,8 @@ bindOption({
   storageItem: opts.minFrameTime,
   converter: toNonnegativeInt,
   invalidMessage: "Must be a nonnegative whole number.",
+});
+bindCheckbox({
+  elementId: "decode-in-background",
+  storageItem: opts.decodeInBackground,
 });

@@ -2,14 +2,14 @@ import { resolve } from "node:path";
 
 import { defineConfig } from "wxt";
 
-import { WASM_NAME } from "./webextension/utils/constants";
+import { DECODE_WORKER_PATH, WASM_NAME } from "./webextension/lib/constants";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ["@wxt-dev/module-svelte"],
   srcDir: "webextension",
   // extensionApi: "webextension-polyfill",
-  extensionApi: "chrome",
+  // extensionApi: "chrome",
 
   imports: false,
 
@@ -24,7 +24,7 @@ export default defineConfig({
     web_accessible_resources: [
       {
         matches: ["<all_urls>"],
-        resources: [`/${WASM_NAME}`],
+        resources: [`/${WASM_NAME}`, DECODE_WORKER_PATH],
       },
     ],
   }),
@@ -47,6 +47,7 @@ export default defineConfig({
   runner: {
     startUrls: [
       "https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif",
+      "https://commons.wikimedia.org/wiki/File:A_weather_balloon_exploding.gif",
     ],
   },
 });

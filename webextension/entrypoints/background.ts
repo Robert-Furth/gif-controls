@@ -1,7 +1,7 @@
 import { browser, Menus, Tabs } from "wxt/browser";
 import { defineBackground } from "wxt/sandbox";
 
-import { RightClickMessage } from "@/utils/messages";
+import { RightClickMessage } from "@/lib/messages";
 
 const menus = import.meta.env.FIREFOX ? browser.menus : browser.contextMenus;
 

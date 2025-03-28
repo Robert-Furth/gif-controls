@@ -67,15 +67,6 @@ pub struct GifFrame {
 
 impl GifFrame {
     fn new(fdec: &FrameDecoder, cvs: Canvas) -> Self {
-        // let buf: Vec<u8> = cvs
-        //     .data
-        //     .into_iter()
-        //     .flat_map(|color| color.into_arr())
-        //     .collect();
-        // let image_data = ImageData::new_with_u8_clamped_array(
-        //     Clamped(buf.as_slice()),
-        //     cvs.width.try_into().unwrap(),
-        // )?;
         Self {
             width: fdec.width,
             height: fdec.height,

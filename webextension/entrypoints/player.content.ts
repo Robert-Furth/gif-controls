@@ -6,8 +6,7 @@ import { ContentScriptContext, createShadowRootUi } from "wxt/client";
 import { defineContentScript } from "wxt/sandbox";
 
 import PlayerLoader from "@/components/PlayerLoader.svelte";
-import { isMessage } from "@/utils/messages";
-import { opts, PlayerOptions } from "@/utils/options";
+import { isMessage } from "@/lib/messages";
 
 export default defineContentScript({
   matches: ["<all_urls>"],
@@ -42,9 +41,6 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
     ui?.remove();
   }
 
-  const options: PlayerOptions = {
-    defaultCounterType: await opts.defaultCounterType.getValue(),
-  };
   const { width, height } = target.getBoundingClientRect();
 
   let shouldRestoreDraggable = false;
@@ -86,7 +82,6 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
         target: container,
         props: {
           source: imgSrc,
-          options,
           unmount: removeSelf,
         },
       });

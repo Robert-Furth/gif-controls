@@ -19,8 +19,13 @@ export namespace opts {
   });
 
   export const minFrameTime = storage.defineItem<number>("local:opt:minFrameTime", { fallback: 2 });
+
+  export const decodeInBackground = storage.defineItem<boolean>("local:opt:decodeInBackground", {
+    fallback: true,
+  });
 }
 
 export type PlayerOptions = {
   defaultCounterType: CounterType;
+  decodeInBackground: boolean;
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
 
-  import type { CounterType } from "@/utils/options";
+  import type { CounterType } from "@/lib/options";
 
   type Props = {
     speedFactor?: number;

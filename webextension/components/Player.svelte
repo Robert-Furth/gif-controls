@@ -6,25 +6,22 @@
   import iconPrevFrame from "@/assets/player-icons/prev-frame.svg";
   import iconRevert from "@/assets/player-icons/revert.svg";
 
-  import { onDestroy, onMount } from "svelte";
+  import { onMount } from "svelte";
+  import { Unwatch } from "wxt/storage";
 
-  import { DecodedGif } from "@@/decoder/pkg/gif_controls_decoder";
-
-  import type { PlayerOptions } from "@/utils/options";
+  import { Gif } from "@/lib/gif";
+  import { CounterType, opts } from "@/lib/options";
 
   import IconButton from "./IconButton.svelte";
   import Options from "./Options.svelte";
   import ProgressBar from "./ProgressBar.svelte";
 
   type Props = {
-    gif: DecodedGif;
+    gif: Gif;
     frameArr: ImageData[];
     unmount: () => void;
-    options: PlayerOptions;
   };
-  let { gif, frameArr, unmount, options }: Props = $props();
-
-  const MIN_DELAY = 2;
+  let { gif, frameArr, unmount }: Props = $props();
 
   let canvas: HTMLCanvasElement;
 
@@ -36,17 +33,21 @@
 
   let optionsOpen = $state(false);
   let speedFactor = $state(1);
-  let counterType = $state(options.defaultCounterType);
+  let counterType: CounterType = $state("none");
+  let minDelay = $state(2);
 
   let forceShow = $derived(isScrubbing || optionsOpen);
 
-  /** `timestamps[i]` = start time for frame `i` */
-  const timestamps: number[] = [0];
-  for (let i = 0; i < gif.numFrames; i++) {
-    const delay = Math.max(gif.frame(i).delay, MIN_DELAY) * 10;
-    timestamps.push(timestamps[i] + delay);
-  }
-  const durationMs = timestamps[timestamps.length - 1];
+  let timestamps = $derived.by(() => {
+    const ts = [0];
+    for (let i = 0; i < gif.numFrames; i++) {
+      const delay = Math.max(gif.frames[i].delay, minDelay) * 10;
+      ts.push(ts[i] + delay);
+    }
+    return ts;
+  });
+  let durationMs = $derived(timestamps[timestamps.length - 1]);
+
   const isAnimated = gif.numFrames > 1;
 
   /* Animation variables.
@@ -55,22 +56,32 @@
   let prevTime: DOMHighResTimeStamp | undefined;
   let animationHandle: number | undefined;
 
+  // Init the canvas
   onMount(() => {
-    // Init the canvas
     canvas.width = gif.canvasWidth;
     canvas.height = gif.canvasHeight;
+  });
 
-    // Start animating
+  // Start animating
+  onMount(() => {
     if (isAnimated) {
       animationHandle = requestAnimationFrame(animate);
+      return () => {
+        animationHandle !== undefined && cancelAnimationFrame(animationHandle);
+      };
     }
   });
 
-  onDestroy(() => {
-    // Stop animating when the component is unmounted
-    if (animationHandle !== undefined) {
-      cancelAnimationFrame(animationHandle);
-    }
+  // Handle options
+  onMount(() => {
+    const unsubs: Unwatch[] = [];
+
+    opts.defaultCounterType.getValue().then((v) => (counterType = v));
+
+    opts.minFrameTime.getValue().then((v) => (minDelay = v));
+    unsubs.push(opts.minFrameTime.watch((v) => (minDelay = v)));
+
+    return () => unsubs.forEach((unsub) => unsub());
   });
 
   // Update canvas on frameIndex update

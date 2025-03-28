@@ -1,18 +1,28 @@
 <script lang="ts">
   import iconRevert from "@/assets/player-icons/revert.svg";
 
+  import { onDestroy } from "svelte";
   import { browser } from "wxt/browser";
 
-  import init, { decode } from "@@/decoder/pkg/gif_controls_decoder";
-
-  import { WASM_NAME } from "@/utils/constants";
-  import type { PlayerOptions } from "@/utils/options";
+  import { WorkerInput, WorkerOutput } from "@/entrypoints/worker";
+  import { DECODE_WORKER_PATH, WASM_NAME } from "@/lib/constants";
+  import { decode, Gif, prepareImageData } from "@/lib/gif";
+  import { opts } from "@/lib/options";
 
   import IconButton from "./IconButton.svelte";
   import Player from "./Player.svelte";
 
-  type Props = { source: string; options: PlayerOptions; unmount: () => void };
-  let { source, options, unmount }: Props = $props();
+  type Props = { source: string; unmount: () => void };
+  let { source, unmount }: Props = $props();
+
+  let stateText = $state("Loading...");
+
+  let worker: Worker;
+  onDestroy(() => {
+    if (worker !== undefined) {
+      worker.terminate();
+    }
+  });
 
   function stopEvent(e: Event) {
     e.preventDefault();
@@ -22,36 +32,40 @@
   const loadingBackground = (color: any) => `linear-gradient(${color}, ${color}), url("${source}")`;
 
   async function loadGif() {
-    await init({ module_or_path: browser.runtime.getURL(`/${WASM_NAME}`) });
-
     const response = await fetch(source);
     if (!response.ok)
       throw new Error(`Could not fetch image: ${response.status} ${response.statusText}`);
-
     const bytes = await response.bytes();
-    const gif = decode(bytes);
 
-    const frameArr = [];
-    for (let i = 0; i < gif.numFrames; i++) {
-      const frameBytes = gif.frame(i).imageData;
+    stateText = "Decoding...";
+    const gif = (await opts.decodeInBackground.getValue())
+      ? await decodeInWorker(bytes)
+      : await decode(bytes, browser.runtime.getURL(`/${WASM_NAME}`));
 
-      let ui8ca: Uint8ClampedArray;
-      if (import.meta.env.FIREFOX) {
-        /* Because of security context BS in Firefox (not Chrome, oddly enough), I can't just create
-         * an `ImageData` directly from `gif.frame(i).imageData`; the security context of the
-         * content script is different from the canvas, so `ctx.putImageData()` fails. Solution is
-         * use `window.Uint8ClampedArray`, copying the data over using `Blob`s (MUCH faster than JS
-         * arrays). */
-        const blob = new Blob([frameBytes], { type: "octet/stream" });
-        ui8ca = new window.Uint8ClampedArray(await blob.arrayBuffer());
-      } else {
-        ui8ca = new window.Uint8ClampedArray(frameBytes);
-      }
-
-      frameArr.push(new ImageData(ui8ca, gif.canvasWidth, gif.canvasHeight));
-    }
+    stateText = "Processing...";
+    const frameArr = await prepareImageData(gif);
 
     return { gif, frameArr };
+  }
+
+  function decodeInWorker(bytes: Uint8Array): Promise<Gif> {
+    worker = new Worker(browser.runtime.getURL(DECODE_WORKER_PATH));
+
+    return new Promise<Gif>((resolve, reject) => {
+      worker.onmessage = (e: MessageEvent<WorkerOutput>) => {
+        switch (e.data.type) {
+          case "ok":
+            resolve(e.data.output);
+            break;
+          case "error":
+            reject(e.data.error);
+            break;
+          default:
+            reject("unexpected message!");
+        }
+      };
+      worker.postMessage({ wasm_path: `/${WASM_NAME}`, bytes } satisfies WorkerInput);
+    });
   }
 </script>
 
@@ -65,12 +79,13 @@
 <div class="wrapper" onclick={stopEvent}>
   {#await loadGif()}
     <div class="bgimg" style:background-image={loadingBackground("#aaa8")}>
-      Loading...
+      {stateText}
       {@render revertButton()}
     </div>
   {:then result}
-    <Player {...result} {options} {unmount} />
+    <Player {...result} {unmount} />
   {:catch e}
+    {@debug e}
     <div class="bgimg" style:background-image={loadingBackground("#a008")}>
       <div>Error!</div>
       <div>{e instanceof Error && e.name === "Error" ? e.message : e}</div>
