@@ -15,7 +15,7 @@ WASM_FILE := decoder/pkg/gif_controls_decoder_bg.wasm
 
 .PHONY: decoder clean-decoder
 decoder: $(WASM_FILE)
-$(WASM_FILE): decoder/src/*.rs decoder/Cargo.toml
+$(WASM_FILE): $(call rwildcard,decoder/src/,*.rs) decoder/Cargo.toml decoder/Cargo.lock
 	cd decoder && wasm-pack build --target web
 
 clean-decoder:
