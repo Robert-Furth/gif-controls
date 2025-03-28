@@ -11,7 +11,7 @@
     "build:chrome": "make chrome",
     "build:firefox": "make firefox",
     "zip:chrome": "wxt zip",
-    "zip:firefox": "make zip -b firefox",
+    "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare"
   },
