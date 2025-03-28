@@ -18,9 +18,14 @@
   let stateText = $state("Loading...");
 
   let worker: Worker;
+  let objectUrl: string;
+
   onDestroy(() => {
     if (worker !== undefined) {
       worker.terminate();
+    }
+    if (objectUrl !== undefined) {
+      URL.revokeObjectURL(objectUrl);
     }
   });
 
@@ -48,8 +53,12 @@
     return { gif, frameArr };
   }
 
-  function decodeInWorker(bytes: Uint8Array): Promise<Gif> {
-    worker = new Worker(browser.runtime.getURL(DECODE_WORKER_PATH));
+  async function decodeInWorker(bytes: Uint8Array): Promise<Gif> {
+    // Get around an *old* chrome issue: https://issues.chromium.org/issues/41098022
+    const r = await fetch(browser.runtime.getURL(DECODE_WORKER_PATH));
+    const blob = new Blob([await r.text()], { type: "text/javascript" });
+    objectUrl = URL.createObjectURL(blob);
+    worker = new Worker(objectUrl);
 
     return new Promise<Gif>((resolve, reject) => {
       worker.onmessage = (e: MessageEvent<WorkerOutput>) => {
@@ -64,7 +73,11 @@
             reject("unexpected message!");
         }
       };
-      worker.postMessage({ wasm_path: `/${WASM_NAME}`, bytes } satisfies WorkerInput);
+
+      worker.postMessage({
+        wasm_path: browser.runtime.getURL(`/${WASM_NAME}`),
+        bytes,
+      } satisfies WorkerInput);
     });
   }
 </script>
