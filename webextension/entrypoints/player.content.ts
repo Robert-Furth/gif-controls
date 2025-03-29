@@ -37,20 +37,20 @@ export default defineContentScript({
 });
 
 async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgSrc: string) {
-  function removeSelf() {
+  function removeSelf(e?: Event) {
+    e?.preventDefault();
     ui?.remove();
   }
 
   const { width, height } = target.getBoundingClientRect();
 
   let shouldRestoreDraggable = false;
+  let originalHref: string | undefined = undefined;
 
   const ui = await createShadowRootUi(ctx, {
     name: "gif-viewer",
     position: "inline",
     anchor: target,
-
-    isolateEvents: true,
 
     append: (anchor, shadowHost) => {
       const style = window.getComputedStyle(anchor);
@@ -69,9 +69,16 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
         shadowHost.style.boxSizing = "border-box";
       }
 
-      if (anchor.parentElement?.nodeName === "A" && anchor.parentElement.draggable) {
-        anchor.parentElement.draggable = false;
-        shouldRestoreDraggable = true;
+      if (anchor.parentElement?.nodeName === "A") {
+        const aTag = anchor.parentElement as HTMLAnchorElement;
+        if (aTag.draggable) {
+          aTag.draggable = false;
+          shouldRestoreDraggable = true;
+        }
+        if (aTag.href) {
+          originalHref = aTag.href;
+          aTag.href = "javascript:void(0)";
+        }
       }
 
       anchor.replaceWith(shadowHost);
@@ -95,8 +102,13 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
       unmount(app);
       ui.shadowHost.replaceWith(target);
 
-      if (shouldRestoreDraggable && target.parentElement) {
-        target.parentElement.draggable = true;
+      if (target.parentElement) {
+        if (shouldRestoreDraggable) {
+          target.parentElement.draggable = true;
+        }
+        if (originalHref !== undefined) {
+          target.parentElement.setAttribute("href", originalHref);
+        }
       }
     },
   });

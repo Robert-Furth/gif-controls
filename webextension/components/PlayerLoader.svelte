@@ -29,11 +29,6 @@
     }
   });
 
-  function stopEvent(e: Event) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
   const loadingBackground = (color: string) =>
     `linear-gradient(${color}, ${color}), url("${source}")`;
 
@@ -89,9 +84,7 @@
   </div>
 {/snippet}
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="wrapper" onclick={stopEvent}>
+<div class="wrapper">
   {#await loadGif()}
     <div class="bgimg" style:background-image={loadingBackground("#aaa8")}>
       {stateText}
