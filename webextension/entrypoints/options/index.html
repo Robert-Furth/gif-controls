@@ -7,54 +7,61 @@
     <title>GIF Controls Options</title>
 
     <meta name="manifest.open_in_tab" content="false" />
-    <meta name="manifest.browser_style" content="false" />
 
     <link rel="stylesheet" href="./options-page.css" />
     <script defer type="module" src="./options-page.ts"></script>
   </head>
 
   <body>
-    <h3>Player</h3>
-    <div class="grid3">
-      <div class="opt-name">Default counter type:</div>
-      <div>
-        <select id="default-counter-type">
+    <h2>Player</h2>
+    <div class="opt-section">
+      <div class="control">
+        Default counter type:
+        <select class="opt-control" id="default-counter-type">
           <option value="frame">Frame</option>
           <option value="time">Time</option>
           <option value="none">None</option>
         </select>
       </div>
-      <div><button id="reset-counter-type" title="Reset to default">Reset</button></div>
-      <div class="opt-desc">
+      <div class="reset">
+        <button id="reset-counter-type" title="Reset to default">Reset</button>
+      </div>
+      <div class="desc">
         What kind of counter, if any, to display on the bottom-right of the player. Options are the
         current frame, the current elapsed time, or no counter at all.
       </div>
-      <!---->
-      <div class="opt-name">Minimum size:</div>
-      <div><input type="text" id="min-width" /> &times; <input type="text" id="min-height" /></div>
-      <div><button id="reset-player-min-size" title="Reset to default">Reset</button></div>
-      <div class="opt-desc">
+      <div class="control">
+        Minimum size:
+        <span class="opt-control">
+          <input type="text" id="min-width" /> &times; <input type="text" id="min-height" />
+        </span>
+      </div>
+      <div class="reset">
+        <button id="reset-player-min-size" title="Reset to default">Reset</button>
+      </div>
+      <div class="desc">
         The minimum width and height of the player. Units should be in px, em, or rem. Leave blank
         for no limit.
       </div>
-      <!---->
-      <div class="opt-name">Minimum frame delay:</div>
-      <div>
-        <input type="number" min="0" id="min-frame-delay" />
+      <div class="control">
+        Minimum frame delay:
+        <span class="opt-control"><input type="number" min="0" id="min-frame-delay" /></span>
       </div>
-      <div><button id="reset-min-frame-delay" title="Reset to default">Reset</button></div>
-      <div class="opt-desc">
-        Minimum amount of time between GIF frames, in hundredths of a second.
+      <div class="reset">
+        <button id="reset-min-frame-delay" title="Reset to default">Reset</button>
       </div>
+      <div class="desc">Minimum amount of time between GIF frames, in hundredths of a second.</div>
     </div>
-    <h3>Decoder</h3>
-    <div class="grid3">
-      <label class="opt-name" for="decode-in-background">Decode in background</label>
-      <div><input type="checkbox" id="decode-in-background" /></div>
-      <div class="opt-desc">
-        Whether to decode GIFs in a background worker. Unchecking may make decoding
-        <em>slightly</em> faster, at the cost of UI stuttering when decoding large files. I'd
-        recommend keeping this ON.
+    <h2>Decoder</h2>
+    <div class="opt-section">
+      <label class="control"
+        >Decode in background:
+        <span class="opt-control"><input type="checkbox" id="decode-in-background" /></span
+      ></label>
+      <div class="desc">
+        Whether to decode GIFs in a background worker. Turning this off may make decoding
+        <em>slightly</em> faster, at the cost of UI stuttering when decoding large files.
+        Recommended to be ON.
       </div>
     </div>
   </body>

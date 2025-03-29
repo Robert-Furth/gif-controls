@@ -1,41 +1,74 @@
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
+
+  max-width: 60rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+  margin: 0 1em;
   padding: 0;
 
   background-color: white;
   color: black;
-  --subtle-text: #555;
+  --desc-text: #555;
+  --desc-background: #eee;
 }
 
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   body {
     background-color: #21262d;
     color: white;
-    --subtle-text: #aaa;
+    --desc-text: #a8a8a8;
+    --desc-background: #2f353f;
   }
 }
 
-.grid3 {
+.opt-section {
   display: grid;
-  grid-template-columns: auto auto auto 1fr;
+  grid-template-columns: max-content auto 1fr;
   row-gap: 0.5em;
-  column-gap: 0.5em;
 }
 
-.opt-name {
-  text-align: right;
-  grid-column: 1;
+.control {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 0.75em;
+  height: max-content;
 }
 
-.opt-desc {
+.reset {
+  margin-left: 1em;
+}
+
+.desc {
   font-style: italic;
-  color: var(--subtle-text);
-  margin-left: 0.75em;
-  grid-column: 4;
+  color: var(--desc-text);
+  margin-left: 1.75em;
+  grid-column: 3;
+  text-align: left;
 
   em {
     font-style: normal;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 550px) {
+  .opt-section {
+    grid-template-columns: 1fr auto;
+  }
+
+  .control {
+    justify-content: flex-start;
+  }
+
+  .desc {
+    grid-column: 1 / -1;
+    margin: 0.5em 1em 1em;
+    padding: 1em;
+    border-radius: 1em;
+    background: var(--desc-background);
   }
 }
 
