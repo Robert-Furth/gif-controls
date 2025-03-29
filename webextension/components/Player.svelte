@@ -48,6 +48,7 @@
     return ts;
   });
   let durationMs = $derived(timestamps[timestamps.length - 1]);
+  let skipAmount = $derived(Math.min(durationMs / 6, 1000));
 
   const isAnimated = gif.numFrames > 1;
 
@@ -104,15 +105,12 @@
       progressMs += reverse ? -elapsed : elapsed;
 
       const maybeFrameIndex = timestampToFrame(progressMs);
-      if (maybeFrameIndex === null) {
-        // Loop
-        if (reverse) {
-          frameIndex = gif.numFrames - 1;
-          progressMs = durationMs;
-        } else {
-          frameIndex = 0;
-          progressMs = 0;
-        }
+      if (maybeFrameIndex === "start") {
+        frameIndex = gif.numFrames - 1;
+        progressMs = durationMs;
+      } else if (maybeFrameIndex === "end") {
+        frameIndex = 0;
+        progressMs = 0;
       } else {
         frameIndex = maybeFrameIndex;
       }
@@ -122,17 +120,29 @@
     animationHandle = requestAnimationFrame(animate);
   }
 
-  function timestampToFrame(ms: number): number | null {
-    if (ms < 0) return null;
+  /* HELPERS */
+
+  /** Helper that converts a timestamp to a frame number, or `"start"`/`"end"` for under/overflows */
+  function timestampToFrame(ms: number): number | "start" | "end" {
+    if (ms < 0) return "start";
 
     for (let i = 1; i < timestamps.length; i++) {
       if (timestamps[i] > ms) {
         return i - 1;
       }
     }
-    return null;
+    return "end";
   }
 
+  /** Like `timestampToFrame()`, but saturates instead of reporting under/overflows */
+  function timestampToFrameSaturate(ms: number): number {
+    const maybeFrameIndex = timestampToFrame(ms);
+    if (maybeFrameIndex === "start") return 0;
+    if (maybeFrameIndex === "end") return gif.numFrames - 1;
+    return maybeFrameIndex;
+  }
+
+  /** Convert a millisecond to a timestamp in seconds and possibly minutes */
   function msToMinSec(ms: number): string {
     const mins = Math.floor(ms / 60000);
     const secs = (ms % 60000) / 1000;
@@ -144,9 +154,64 @@
     }
     return secsStr;
   }
+
+  /** Adds `a + b % mod`, using wrap-around logic. */
+  function addWraparound(a: number, b: number, mod: number): number {
+    let intermediate = (a + b) % mod;
+    if (intermediate < 0) {
+      return mod + intermediate;
+    }
+    return intermediate;
+  }
+
+  /* EVENTS */
+
+  function incFrame() {
+    frameIndex = frameIndex === gif.numFrames - 1 ? 0 : frameIndex + 1;
+    progressMs = timestamps[frameIndex];
+  }
+
+  function decFrame() {
+    frameIndex = frameIndex === 0 ? gif.numFrames - 1 : frameIndex - 1;
+    progressMs = timestamps[frameIndex];
+  }
+
+  function onkeydown(this: HTMLElement, e: KeyboardEvent) {
+    if (e.target !== this) return;
+    e.stopPropagation();
+
+    switch (e.key) {
+      case "ArrowRight": {
+        if (e.shiftKey) {
+          incFrame();
+        } else {
+          progressMs = addWraparound(progressMs, skipAmount, durationMs);
+          frameIndex = timestampToFrameSaturate(progressMs);
+        }
+        break;
+      }
+      case "ArrowLeft": {
+        if (e.shiftKey) {
+          decFrame();
+        } else {
+          progressMs = addWraparound(progressMs, -skipAmount, durationMs);
+          frameIndex = timestampToFrameSaturate(progressMs);
+        }
+        break;
+      }
+      case " ": {
+        if (!e.repeat) isPaused = !isPaused;
+        break;
+      }
+      default:
+        return;
+    }
+
+    e.preventDefault();
+  }
 </script>
 
-<canvas bind:this={canvas}></canvas>
+<canvas tabindex="0" {onkeydown} bind:this={canvas}></canvas>
 <div class={["player-controls", "controls-top", forceShow && "force-show"]}>
   <IconButton title="Revert" src={iconRevert} onclick={unmount} style="padding: 2px 2px 1px" />
   <IconButton title="Options" src={iconOptions} onclick={() => (optionsOpen = !optionsOpen)} />
@@ -157,36 +222,22 @@
   {/if}
 </div>
 <div class={["player-controls", "controls-bottom", forceShow && "force-show"]}>
-  <IconButton
-    title="Previous Frame"
-    src={iconPrevFrame}
-    disabled={!isPaused}
-    onclick={() => {
-      frameIndex = frameIndex === 0 ? gif.numFrames - 1 : frameIndex - 1;
-      progressMs = timestamps[frameIndex];
-    }}
-  />
+  <IconButton title="Previous Frame" src={iconPrevFrame} disabled={!isPaused} onclick={decFrame} />
   <IconButton
     title={isPaused ? "Play" : "Pause"}
     src={isPaused ? iconPlay : iconPause}
     onclick={() => (isPaused = !isPaused)}
     disabled={!isAnimated}
   />
-  <IconButton
-    title="Next Frame"
-    src={iconNextFrame}
-    disabled={!isPaused}
-    onclick={() => {
-      frameIndex = frameIndex === gif.numFrames - 1 ? 0 : frameIndex + 1;
-      progressMs = timestamps[frameIndex];
-    }}
-  />
+  <IconButton title="Next Frame" src={iconNextFrame} disabled={!isPaused} onclick={incFrame} />
   <ProgressBar
     bind:val={progressMs}
     max={durationMs}
-    onChanged={(ts) => {
+    editable={isAnimated}
+    {onkeydown}
+    onScrub={() => {
       isScrubbing = true;
-      frameIndex = timestampToFrame(ts) ?? gif.numFrames - 1;
+      frameIndex = timestampToFrameSaturate(progressMs);
     }}
     onScrubEnd={() => (isScrubbing = false)}
   />

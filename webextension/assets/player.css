@@ -37,6 +37,11 @@ canvas {
   max-height: 100%;
 }
 
+canvas:focus {
+  outline: 2px solid blue;
+  border-radius: 2px;
+}
+
 .player-controls {
   opacity: 0;
   transition: opacity 0.2s;
@@ -86,7 +91,6 @@ button.icon-button > img {
 }
 
 .progress-bar {
-  cursor: pointer;
   flex-grow: 1;
   height: 10px;
   /* background-color: red; */
@@ -96,6 +100,10 @@ button.icon-button > img {
   > div {
     height: 100%;
     background-color: red;
+  }
+
+  &.editable {
+    cursor: pointer;
   }
 }
 
