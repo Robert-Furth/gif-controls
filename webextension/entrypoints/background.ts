@@ -24,7 +24,7 @@ export default defineBackground(() => {
       id: "add-gif-controls",
       title: "Add Controls",
       contexts: ["image"],
-      targetUrlPatterns: ["*://*/*.gif", "*://*/*.gif?*"],
+      targetUrlPatterns: ["*://*/*.gif", "*://*/*.gif?*", "file://*/*.gif"],
     });
   });
 });
