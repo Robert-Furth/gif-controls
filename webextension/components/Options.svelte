@@ -4,10 +4,16 @@
   import type { CounterType } from "@/lib/options";
 
   type Props = {
-    speedFactor?: number;
-    counterType?: CounterType;
+    speedFactor: number;
+    counterType: CounterType;
+    reverse: boolean;
   } & Record<string, unknown>;
-  let { speedFactor = $bindable(1), counterType = $bindable("frame"), ...rest }: Props = $props();
+  let {
+    speedFactor = $bindable(),
+    counterType = $bindable(),
+    reverse = $bindable(),
+    ...rest
+  }: Props = $props();
 </script>
 
 <div transition:slide={{ axis: "x" }} class="options-dropdown" {...rest}>
@@ -16,6 +22,8 @@
     <input type="range" min="0.25" max="2" step="0.25" bind:value={speedFactor} />
     {(speedFactor * 100).toFixed(0)}%
   </div>
+  <div class="right">Reverse:</div>
+  <div><input type="checkbox" bind:checked={reverse} /></div>
   <div class="right">Counter:</div>
   <div>
     <select bind:value={counterType}>

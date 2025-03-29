@@ -34,6 +34,7 @@
   let optionsOpen = $state(false);
   let speedFactor = $state(1);
   let counterType: CounterType = $state("none");
+  let reverse = $state(false);
   let minDelay = $state(2);
 
   let forceShow = $derived(isScrubbing || optionsOpen);
@@ -99,12 +100,19 @@
         return;
       }
 
-      progressMs += (curTime - prevTime) * speedFactor;
+      const elapsed = (curTime - prevTime) * speedFactor;
+      progressMs += reverse ? -elapsed : elapsed;
+
       const maybeFrameIndex = timestampToFrame(progressMs);
       if (maybeFrameIndex === null) {
         // Loop
-        frameIndex = 0;
-        progressMs = 0;
+        if (reverse) {
+          frameIndex = gif.numFrames - 1;
+          progressMs = durationMs;
+        } else {
+          frameIndex = 0;
+          progressMs = 0;
+        }
       } else {
         frameIndex = maybeFrameIndex;
       }
@@ -115,6 +123,8 @@
   }
 
   function timestampToFrame(ms: number): number | null {
+    if (ms < 0) return null;
+
     for (let i = 1; i < timestamps.length; i++) {
       if (timestamps[i] > ms) {
         return i - 1;
@@ -142,7 +152,7 @@
   <IconButton title="Options" src={iconOptions} onclick={() => (optionsOpen = !optionsOpen)} />
   {#if optionsOpen}
     <div style="position: relative; align-self: flex-start;">
-      <Options bind:speedFactor bind:counterType />
+      <Options bind:speedFactor bind:counterType bind:reverse />
     </div>
   {/if}
 </div>
