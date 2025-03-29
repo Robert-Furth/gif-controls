@@ -15,9 +15,9 @@ export default defineConfig({
     name: "Gif Controls",
     permissions: [browser === "firefox" ? "menus" : "contextMenus", "storage"],
     host_permissions: ["<all_urls>"],
-    // content_security_policy: {
-    //   extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
-    // },
+    action: {
+      default_title: "GIF Controls Options",
+    },
 
     web_accessible_resources: [
       {

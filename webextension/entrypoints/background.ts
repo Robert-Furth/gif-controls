@@ -4,6 +4,7 @@ import { defineBackground } from "wxt/sandbox";
 import { RightClickMessage } from "@/lib/messages";
 
 const menus = import.meta.env.FIREFOX ? browser.menus : browser.contextMenus;
+const action = browser.action ?? browser.browserAction;
 
 function addControlsListener(info: Menus.OnClickData, tab?: Tabs.Tab) {
   if (tab?.id === undefined || info.menuItemId !== "add-gif-controls") return;
@@ -18,6 +19,8 @@ function addControlsListener(info: Menus.OnClickData, tab?: Tabs.Tab) {
 
 export default defineBackground(() => {
   menus.onClicked.addListener(addControlsListener);
+
+  action.onClicked.addListener(() => browser.runtime.openOptionsPage());
 
   browser.runtime.onInstalled.addListener(() => {
     menus.create({
