@@ -88,7 +88,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="wrapper" onclick={(e) => e.stopPropagation()}>
   {#await loadGif()}
-    <div class="bgimg" style:background-image={loadingBackground("#aaa8")}>
+    <div class="bgimg" style:background-image={loadingBackground("#666c")}>
       {stateText}
       {@render revertButton()}
     </div>
