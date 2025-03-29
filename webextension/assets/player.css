@@ -37,8 +37,10 @@ canvas {
   max-height: 100%;
 }
 
-canvas:focus {
+canvas:focus-visible {
   outline: 2px solid blue;
+  outline: 5px auto Highlight;
+  outline: 5px auto -webkit-focus-ring-color;
   border-radius: 2px;
 }
 
