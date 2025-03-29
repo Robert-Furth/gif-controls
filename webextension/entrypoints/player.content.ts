@@ -31,7 +31,7 @@ export default defineContentScript({
 
       if (!(imageElement instanceof HTMLImageElement)) return;
 
-      return createPlayer(ctx, imageElement, imageElement.src).then((ui) => ui.mount());
+      return createPlayer(ctx, imageElement, imageElement.currentSrc).then((ui) => ui.mount());
     });
   },
 });
