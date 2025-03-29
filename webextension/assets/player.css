@@ -1,20 +1,22 @@
 html,
 body {
+  all: initial;
+
   height: 100%;
   margin: 0;
   padding: 0;
   cursor: default;
   text-align: left;
+
+  font-size: 14px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: white;
 }
 
 .wrapper {
   position: relative;
   width: 100%;
   height: 100%;
-
-  font-size: 14px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  color: white;
 }
 
 .bgimg {
