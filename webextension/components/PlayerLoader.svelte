@@ -84,7 +84,9 @@
   </div>
 {/snippet}
 
-<div class="wrapper">
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="wrapper" onclick={(e) => e.stopPropagation()}>
   {#await loadGif()}
     <div class="bgimg" style:background-image={loadingBackground("#aaa8")}>
       {stateText}
