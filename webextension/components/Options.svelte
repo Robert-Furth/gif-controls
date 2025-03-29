@@ -6,7 +6,7 @@
   type Props = {
     speedFactor?: number;
     counterType?: CounterType;
-  } & Record<string, any>;
+  } & Record<string, unknown>;
   let { speedFactor = $bindable(1), counterType = $bindable("frame"), ...rest }: Props = $props();
 </script>
 

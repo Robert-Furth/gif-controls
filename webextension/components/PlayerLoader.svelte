@@ -34,7 +34,8 @@
     e.stopPropagation();
   }
 
-  const loadingBackground = (color: any) => `linear-gradient(${color}, ${color}), url("${source}")`;
+  const loadingBackground = (color: string) =>
+    `linear-gradient(${color}, ${color}), url("${source}")`;
 
   async function loadGif() {
     const response = await fetch(source);
@@ -88,7 +89,8 @@
   </div>
 {/snippet}
 
-<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="wrapper" onclick={stopEvent}>
   {#await loadGif()}
     <div class="bgimg" style:background-image={loadingBackground("#aaa8")}>
@@ -98,7 +100,6 @@
   {:then result}
     <Player {...result} {unmount} />
   {:catch e}
-    {@debug e}
     <div class="bgimg" style:background-image={loadingBackground("#a008")}>
       <div>Error!</div>
       <div>{e instanceof Error && e.name === "Error" ? e.message : e}</div>

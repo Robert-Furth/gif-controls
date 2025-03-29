@@ -14,7 +14,7 @@ type WorkerOutputOk = {
 
 type WorkerOutputErr = {
   type: "error";
-  error: any;
+  error: unknown;
 };
 
 export type WorkerOutput = WorkerOutputOk | WorkerOutputErr;

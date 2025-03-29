@@ -2,7 +2,7 @@
   type Props = {
     src: string;
     title: string;
-  } & Record<string, any>;
+  } & Record<string, unknown>;
   let { src, title, ...rest }: Props = $props();
 </script>
 

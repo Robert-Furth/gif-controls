@@ -1,4 +1,3 @@
-import { mount } from "svelte";
 import { WxtStorageItem } from "wxt/storage";
 
 // import OptionsPage from "@/components/options-page/OptionsPage.svelte";

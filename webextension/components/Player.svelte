@@ -67,7 +67,7 @@
     if (isAnimated) {
       animationHandle = requestAnimationFrame(animate);
       return () => {
-        animationHandle !== undefined && cancelAnimationFrame(animationHandle);
+        cancelAnimationFrame(animationHandle!);
       };
     }
   });

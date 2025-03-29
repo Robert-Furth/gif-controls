@@ -4,7 +4,7 @@
     max: number;
     onChanged?: (val: number) => void;
     onScrubEnd?: () => void;
-  } & Record<string, any>;
+  } & Record<string, unknown>;
   let { val = $bindable(0), max = 100, onChanged, onScrubEnd, ...rest }: Props = $props();
 
   let progressBar: HTMLDivElement;
