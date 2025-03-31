@@ -16,7 +16,7 @@
   }: Props = $props();
 </script>
 
-<div transition:slide={{ axis: "x" }} class="options-dropdown" {...rest}>
+<div transition:slide={{ axis: "y" }} class="options-dropdown" {...rest}>
   <div class="right">Speed:</div>
   <div class="speed-control">
     <input type="range" min="0.25" max="2" step="0.25" bind:value={speedFactor} />

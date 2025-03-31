@@ -86,12 +86,6 @@ function toCounterType(v: string): CounterType | undefined {
   return undefined;
 }
 
-function toCssLength(v: string): string | undefined {
-  const s = v.trim();
-  if (s === "" || /^-?\d+(px|em|rem)$/.test(s)) return s;
-  return undefined;
-}
-
 function toNonnegativeInt(v: string): number | undefined {
   const s = v.trim();
   if (!/^\d+$/.test(s)) return undefined;
@@ -108,15 +102,15 @@ bindOption({
   elementId: "min-width",
   resetId: "reset-player-min-size",
   storageItem: opts.minPlayerWidth,
-  converter: toCssLength,
-  invalidMessage: "Must be blank or a width in px/em/rem.",
+  converter: toNonnegativeInt,
+  invalidMessage: "Must be a nonnegative whole number.",
 });
 bindOption({
   elementId: "min-height",
   resetId: "reset-player-min-size",
   storageItem: opts.minPlayerHeight,
-  converter: toCssLength,
-  invalidMessage: "Must be blank or a width in px/em/rem.",
+  converter: toNonnegativeInt,
+  invalidMessage: "Must be a nonnegative whole number.",
 });
 bindOption({
   elementId: "min-frame-delay",

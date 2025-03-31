@@ -11,15 +11,19 @@ body {
   font-size: 14px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: white;
+
+  --controls-padding: 3px;
 }
 
 .wrapper {
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 
 .bgimg {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -53,7 +57,7 @@ canvas:focus-visible {
   gap: 3px;
 
   width: 100%;
-  padding: 3px;
+  padding: var(--controls-padding);
   box-sizing: border-box;
 }
 
@@ -131,6 +135,7 @@ button.icon-button > img {
   row-gap: 0.25em;
   column-gap: 0.5em;
   align-items: center;
+  z-index: 1;
 }
 
 .speed-control {
@@ -149,4 +154,21 @@ input[type="range"] {
   vertical-align: middle;
   margin: 0;
   width: 6em;
+}
+
+.resize-handle {
+  width: 16px;
+  height: 16px;
+  margin-bottom: calc(-1 * var(--controls-padding));
+  margin-right: calc(-1 * var(--controls-padding));
+  margin-left: -5px;
+  align-self: end;
+
+  cursor: nw-resize;
+  user-select: none;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }

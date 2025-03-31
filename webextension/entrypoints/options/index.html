@@ -33,16 +33,14 @@
       <div class="control">
         Minimum size:
         <span class="opt-control">
-          <input type="text" id="min-width" /> &times; <input type="text" id="min-height" />
+          <input type="number" min="0" id="min-width" /> &times;
+          <input type="number" min="0" id="min-height" />
         </span>
       </div>
       <div class="reset">
         <button id="reset-player-min-size" title="Reset to default">Reset</button>
       </div>
-      <div class="desc">
-        The minimum width and height of the player. Units should be in px, em, or rem. Leave blank
-        for no limit.
-      </div>
+      <div class="desc">The minimum width and height of the player in pixels.</div>
       <div class="control">
         Minimum frame delay:
         <span class="opt-control"><input type="number" min="0" id="min-frame-delay" /></span>

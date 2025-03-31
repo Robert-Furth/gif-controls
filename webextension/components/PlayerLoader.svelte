@@ -12,8 +12,13 @@
   import IconButton from "./IconButton.svelte";
   import Player from "./Player.svelte";
 
-  type Props = { source: string; unmount: () => void };
-  let { source, unmount }: Props = $props();
+  type Props = {
+    source: string;
+    unmount: () => void;
+    defaultWidth: number;
+    defaultHeight: number;
+  };
+  let { source, unmount, defaultWidth, defaultHeight }: Props = $props();
 
   let stateText = $state("Loading...");
 
@@ -84,21 +89,17 @@
   </div>
 {/snippet}
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="wrapper" onclick={(e) => e.stopPropagation()}>
-  {#await loadGif()}
-    <div class="bgimg" style:background-image={loadingBackground("#666c")}>
-      {stateText}
-      {@render revertButton()}
-    </div>
-  {:then result}
-    <Player {...result} {unmount} />
-  {:catch e}
-    <div class="bgimg" style:background-image={loadingBackground("#a008")}>
-      <div>Error!</div>
-      <div>{e instanceof Error && e.name === "Error" ? e.message : e}</div>
-      {@render revertButton()}
-    </div>
-  {/await}
-</div>
+{#await loadGif()}
+  <div class="bgimg" style:background-image={loadingBackground("#666c")}>
+    {stateText}
+    {@render revertButton()}
+  </div>
+{:then result}
+  <Player {...result} {unmount} {defaultWidth} {defaultHeight} />
+{:catch e}
+  <div class="bgimg" style:background-image={loadingBackground("#a008")}>
+    <div>Error!</div>
+    <div>{e instanceof Error && e.name === "Error" ? e.message : e}</div>
+    {@render revertButton()}
+  </div>
+{/await}

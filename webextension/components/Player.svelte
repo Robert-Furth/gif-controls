@@ -4,24 +4,27 @@
   import iconPause from "@/assets/player-icons/pause.svg";
   import iconPlay from "@/assets/player-icons/play.svg";
   import iconPrevFrame from "@/assets/player-icons/prev-frame.svg";
+  import iconResetSize from "@/assets/player-icons/reset-size.svg";
   import iconRevert from "@/assets/player-icons/revert.svg";
 
   import { onMount } from "svelte";
-  import { type Unwatch } from "wxt/storage";
 
   import { type Gif } from "@/lib/gif";
-  import { type CounterType, opts } from "@/lib/options";
+  import { type CounterType, opts, watchOption } from "@/lib/options";
 
   import IconButton from "./IconButton.svelte";
   import Options from "./Options.svelte";
   import ProgressBar from "./ProgressBar.svelte";
+  import Resizer from "./Resizer.svelte";
 
   type Props = {
     gif: Gif;
     frameArr: ImageData[];
     unmount: () => void;
+    defaultWidth: number;
+    defaultHeight: number;
   };
-  let { gif, frameArr, unmount }: Props = $props();
+  let { gif, frameArr, unmount, defaultWidth, defaultHeight }: Props = $props();
 
   let canvas: HTMLCanvasElement;
 
@@ -35,20 +38,24 @@
   let speedFactor = $state(1);
   let counterType: CounterType = $state("none");
   let reverse = $state(false);
-  let minDelay = $state(2);
-
   let forceShow = $derived(isScrubbing || optionsOpen);
+
+  let minDelay = watchOption(opts.minFrameTime);
 
   let timestamps = $derived.by(() => {
     const ts = [0];
     for (let i = 0; i < gif.numFrames; i++) {
-      const delay = Math.max(gif.frames[i].delay, minDelay) * 10;
+      const delay = Math.max(gif.frames[i].delay, $minDelay) * 10;
       ts.push(ts[i] + delay);
     }
     return ts;
   });
   let durationMs = $derived(timestamps[timestamps.length - 1]);
   let skipAmount = $derived(Math.min(durationMs / 6, 1000));
+
+  let curWidth = $state(defaultWidth);
+  let curHeight = $state(defaultHeight);
+  let cssOffsX = $derived((defaultWidth - curWidth) / 2);
 
   const isAnimated = gif.numFrames > 1;
 
@@ -76,14 +83,7 @@
 
   // Handle options
   onMount(() => {
-    const unsubs: Unwatch[] = [];
-
     opts.defaultCounterType.getValue().then((v) => (counterType = v));
-
-    opts.minFrameTime.getValue().then((v) => (minDelay = v));
-    unsubs.push(opts.minFrameTime.watch((v) => (minDelay = v)));
-
-    return () => unsubs.forEach((unsub) => unsub());
   });
 
   // Update canvas on frameIndex update
@@ -211,43 +211,70 @@
   }
 </script>
 
-<canvas tabindex="0" {onkeydown} bind:this={canvas}></canvas>
-<div class={["player-controls", "controls-top", forceShow && "force-show"]}>
-  <IconButton title="Revert" src={iconRevert} onclick={unmount} style="padding: 2px 2px 1px" />
-  <IconButton title="Options" src={iconOptions} onclick={() => (optionsOpen = !optionsOpen)} />
-  {#if optionsOpen}
-    <div style="position: relative; align-self: flex-start;">
-      <Options bind:speedFactor bind:counterType bind:reverse />
+<div
+  class="wrapper"
+  role="application"
+  style:width="{curWidth}px"
+  style:height="{curHeight}px"
+  style:left="{cssOffsX}px"
+>
+  <canvas tabindex="0" {onkeydown} bind:this={canvas}></canvas>
+  <div class={["player-controls", "controls-top", forceShow && "force-show"]}>
+    <IconButton title="Revert" src={iconRevert} onclick={unmount} style="padding: 2px 2px 1px" />
+    <div>
+      <IconButton title="Options" src={iconOptions} onclick={() => (optionsOpen = !optionsOpen)} />
+      {#if optionsOpen}
+        <div style="position: relative; top: var(--controls-padding);">
+          <Options bind:speedFactor bind:counterType bind:reverse />
+        </div>
+      {/if}
     </div>
-  {/if}
-</div>
-<div class={["player-controls", "controls-bottom", forceShow && "force-show"]}>
-  <IconButton title="Previous Frame" src={iconPrevFrame} disabled={!isPaused} onclick={decFrame} />
-  <IconButton
-    title={isPaused ? "Play" : "Pause"}
-    src={isPaused ? iconPlay : iconPause}
-    onclick={() => (isPaused = !isPaused)}
-    disabled={!isAnimated}
-  />
-  <IconButton title="Next Frame" src={iconNextFrame} disabled={!isPaused} onclick={incFrame} />
-  <ProgressBar
-    bind:val={progressMs}
-    max={durationMs}
-    editable={isAnimated}
-    {onkeydown}
-    onScrub={() => {
-      isScrubbing = true;
-      frameIndex = timestampToFrameSaturate(progressMs);
-    }}
-    onScrubEnd={() => (isScrubbing = false)}
-  />
-  {#if counterType === "frame"}
-    <div class="frame-counter" style:flex-basis="{gif.numFrames.toString().length}ch">
-      {frameIndex + 1}
-    </div>
-  {:else if counterType === "time"}
-    <div class="frame-counter" style:flex-basis="{msToMinSec(durationMs).length - 0.25}ch">
-      {msToMinSec(progressMs)}
-    </div>
-  {/if}
+    {#if curWidth !== defaultWidth || curHeight !== defaultHeight}
+      <IconButton
+        title="Reset Size"
+        src={iconResetSize}
+        style="padding: 2px;"
+        onclick={() => {
+          curWidth = defaultWidth;
+          curHeight = defaultHeight;
+        }}
+      />
+    {/if}
+  </div>
+  <div class={["player-controls", "controls-bottom", forceShow && "force-show"]}>
+    <IconButton
+      title="Previous Frame"
+      src={iconPrevFrame}
+      disabled={!isPaused}
+      onclick={decFrame}
+    />
+    <IconButton
+      title={isPaused ? "Play" : "Pause"}
+      src={isPaused ? iconPlay : iconPause}
+      onclick={() => (isPaused = !isPaused)}
+      disabled={!isAnimated}
+    />
+    <IconButton title="Next Frame" src={iconNextFrame} disabled={!isPaused} onclick={incFrame} />
+    <ProgressBar
+      bind:val={progressMs}
+      max={durationMs}
+      editable={isAnimated}
+      {onkeydown}
+      onScrub={() => {
+        isScrubbing = true;
+        frameIndex = timestampToFrameSaturate(progressMs);
+      }}
+      onScrubEnd={() => (isScrubbing = false)}
+    />
+    {#if counterType === "frame"}
+      <div class="frame-counter" style:flex-basis="{gif.numFrames.toString().length}ch">
+        {frameIndex + 1}
+      </div>
+    {:else if counterType === "time"}
+      <div class="frame-counter" style:flex-basis="{msToMinSec(durationMs).length - 0.25}ch">
+        {msToMinSec(progressMs)}
+      </div>
+    {/if}
+    <Resizer bind:width={curWidth} bind:height={curHeight} />
+  </div>
 </div>

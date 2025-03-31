@@ -1,4 +1,6 @@
-import { storage } from "wxt/storage";
+import { onMount } from "svelte";
+import { writable } from "svelte/store";
+import { storage, WxtStorageItem } from "wxt/storage";
 
 export type CounterType = "frame" | "time" | "none";
 
@@ -7,12 +9,12 @@ export const opts = {
     fallback: "frame",
   }),
 
-  minPlayerWidth: storage.defineItem<string>("local:opt:minWidth", {
-    fallback: "",
+  minPlayerWidth: storage.defineItem<number>("local:opt:minWidth", {
+    fallback: 100,
   }),
 
-  minPlayerHeight: storage.defineItem<string>("local:opt:minHeight", {
-    fallback: "60px",
+  minPlayerHeight: storage.defineItem<number>("local:opt:minHeight", {
+    fallback: 60,
   }),
 
   minFrameTime: storage.defineItem<number>("local:opt:minFrameTime", { fallback: 2 }),
@@ -26,3 +28,16 @@ export type PlayerOptions = {
   defaultCounterType: CounterType;
   decodeInBackground: boolean;
 };
+
+export function watchOption<T>(
+  option: WxtStorageItem<T, Record<string, unknown>>,
+  initialValue?: T,
+) {
+  const store = writable(initialValue ?? option.fallback);
+  option.getValue().then((v) => store.set(v));
+
+  onMount(() => {
+    return option.watch((v) => store.set(v));
+  });
+  return store;
+}

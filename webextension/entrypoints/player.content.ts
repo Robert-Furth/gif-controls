@@ -7,6 +7,7 @@ import { defineContentScript } from "wxt/sandbox";
 
 import PlayerLoader from "@/components/PlayerLoader.svelte";
 import { isMessage } from "@/lib/messages";
+import { opts } from "@/lib/options";
 
 export default defineContentScript({
   matches: ["<all_urls>"],
@@ -43,6 +44,8 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
   }
 
   const { width, height } = target.getBoundingClientRect();
+  const minWidth = await opts.minPlayerWidth.getValue();
+  const minHeight = await opts.minPlayerHeight.getValue();
 
   let shouldRestoreDraggable = false;
   let originalHref: string | undefined = undefined;
@@ -64,7 +67,8 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
         shadowHost.style.background = style.background;
         shadowHost.style.width = `${width}px`;
         shadowHost.style.height = `${height}px`;
-        shadowHost.style.minHeight = "60px";
+        shadowHost.style.minWidth = `${minWidth}px`;
+        shadowHost.style.minHeight = `${minHeight}px`;
         shadowHost.style.display = style.display === "inline" ? "inline-block" : style.display;
         shadowHost.style.boxSizing = "border-box";
       }
@@ -90,6 +94,8 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
         props: {
           source: imgSrc,
           unmount: removeSelf,
+          defaultWidth: width,
+          defaultHeight: height,
         },
       });
       return app;
