@@ -43,6 +43,16 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
     ui?.remove();
   }
 
+  const observer = new MutationObserver((records) => {
+    if (!ui) return;
+
+    for (const record of records) {
+      if (Array.from(record.removedNodes).includes(ui.shadowHost)) {
+        ui.remove();
+      }
+    }
+  });
+
   const { width, height } = target.getBoundingClientRect();
   const minWidth = await opts.minPlayerWidth.getValue();
   const minHeight = await opts.minPlayerHeight.getValue();
@@ -73,19 +83,21 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
         shadowHost.style.boxSizing = "border-box";
       }
 
-      if (anchor.parentElement?.nodeName === "A") {
-        const aTag = anchor.parentElement as HTMLAnchorElement;
-        if (aTag.draggable) {
-          aTag.draggable = false;
+      const parent = anchor.parentElement;
+      if (parent !== null) {
+        if (parent.draggable) {
+          parent.draggable = false;
           shouldRestoreDraggable = true;
         }
-        if (aTag.href) {
-          originalHref = aTag.href;
-          aTag.href = "javascript:void(0)";
+
+        if (parent.nodeName === "A") {
+          originalHref = (parent as HTMLAnchorElement).href;
+          (parent as HTMLAnchorElement).href = "javascript:void(0)";
         }
       }
 
       anchor.replaceWith(shadowHost);
+      observer.observe(document.body, { childList: true, subtree: true });
     },
 
     onMount: (container) => {
@@ -106,6 +118,7 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
         throw new Error("Cannot unmount svelte component since it is undefined!");
       }
       unmount(app);
+      observer.disconnect();
       ui.shadowHost.replaceWith(target);
 
       if (target.parentElement) {
