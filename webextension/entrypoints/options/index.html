@@ -17,7 +17,7 @@
     <div class="opt-section">
       <div class="control">
         Default counter type:
-        <select class="opt-control" id="default-counter-type">
+        <select id="default-counter-type">
           <option value="frame">Frame</option>
           <option value="time">Time</option>
           <option value="none">None</option>
@@ -32,7 +32,7 @@
       </div>
       <div class="control">
         Minimum size:
-        <span class="opt-control">
+        <span>
           <input type="number" min="0" id="min-width" /> &times;
           <input type="number" min="0" id="min-height" />
         </span>
@@ -43,7 +43,7 @@
       <div class="desc">The minimum width and height of the player in pixels.</div>
       <div class="control">
         Minimum frame delay:
-        <span class="opt-control"><input type="number" min="0" id="min-frame-delay" /></span>
+        <span><input type="number" min="0" id="min-frame-delay" /></span>
       </div>
       <div class="reset">
         <button id="reset-min-frame-delay" title="Reset to default">Reset</button>
@@ -53,8 +53,7 @@
     <h2>Decoder</h2>
     <div class="opt-section">
       <label class="control"
-        >Decode in background:
-        <span class="opt-control"><input type="checkbox" id="decode-in-background" /></span
+        >Decode in background: <span><input type="checkbox" id="decode-in-background" /></span
       ></label>
       <div class="desc">
         Whether to decode GIFs in a background worker. Turning this off may make decoding

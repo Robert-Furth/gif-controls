@@ -33,12 +33,13 @@
 
   let isPaused = $state(false);
   let isScrubbing = $state(false);
-
   let optionsOpen = $state(false);
+  let forceShow = $derived(isScrubbing || optionsOpen);
+
+  // Player options
   let speedFactor = $state(1);
   let counterType: CounterType = $state("none");
   let reverse = $state(false);
-  let forceShow = $derived(isScrubbing || optionsOpen);
 
   let minDelay = watchOption(opts.minFrameTime);
 
@@ -95,6 +96,7 @@
     }
   });
 
+  // Main animation function
   async function animate(curTime: DOMHighResTimeStamp) {
     await (async () => {
       if (isPaused || isScrubbing || prevTime === undefined) {
@@ -155,7 +157,7 @@
     return secsStr;
   }
 
-  /** Adds `a + b % mod`, using wrap-around logic. */
+  /** Adds `a + b % mod`, wrapping around if a + b is negative. */
   function addWraparound(a: number, b: number, mod: number): number {
     let intermediate = (a + b) % mod;
     if (intermediate < 0) {
@@ -218,7 +220,8 @@
   style:height="{curHeight}px"
   style:left="{cssOffsX}px"
 >
-  <canvas tabindex="0" {onkeydown} bind:this={canvas}></canvas>
+  <canvas tabindex="0" {onkeydown} onclick={() => (isPaused = !isPaused)} bind:this={canvas}
+  ></canvas>
   <div class={["player-controls", "controls-top", forceShow && "force-show"]}>
     <IconButton title="Revert" src={iconRevert} onclick={unmount} style="padding: 2px 2px 1px" />
     <div>
@@ -260,6 +263,8 @@
       max={durationMs}
       editable={isAnimated}
       {onkeydown}
+      aria-label="Seek"
+      aria-value=""
       onScrub={() => {
         isScrubbing = true;
         frameIndex = timestampToFrameSaturate(progressMs);
