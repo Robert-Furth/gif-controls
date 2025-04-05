@@ -44,5 +44,6 @@
 <svelte:window onmouseup={() => (isResizing = false)} onmousemove={resize} />
 
 <div class="resize-handle" role="presentation" onmousedown={() => (isResizing = true)}>
+  <!-- svelte-ignore a11y_missing_attribute -->
   <img src={resizeSrc} draggable="false" />
 </div>
