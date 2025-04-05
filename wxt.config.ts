@@ -18,6 +18,9 @@ export default defineConfig({
     action: {
       default_title: "GIF Controls Options",
     },
+    content_security_policy: {
+      extension_pages: "script-src 'self' 'wasm-unsafe-eval'",
+    },
 
     web_accessible_resources: [
       {
@@ -44,8 +47,9 @@ export default defineConfig({
 
   webExt: {
     startUrls: [
-      "https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif",
+      // "https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif",
       "https://commons.wikimedia.org/wiki/File:A_weather_balloon_exploding.gif",
+      "https://en.wikipedia.org/wiki/GIF",
     ],
   },
 });
