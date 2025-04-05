@@ -1,6 +1,6 @@
+import { storage, WxtStorageItem } from "#imports";
 import { onMount } from "svelte";
 import { writable } from "svelte/store";
-import { storage, WxtStorageItem } from "wxt/storage";
 
 export type CounterType = "frame" | "time" | "none";
 

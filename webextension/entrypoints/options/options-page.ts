@@ -1,9 +1,6 @@
-import { WxtStorageItem } from "wxt/storage";
+import { WxtStorageItem } from "#imports";
 
-// import OptionsPage from "@/components/options-page/OptionsPage.svelte";
 import { CounterType, opts } from "@/lib/options";
-
-// mount(OptionsPage, { target: document.body });
 
 interface ToString {
   toString: () => string;

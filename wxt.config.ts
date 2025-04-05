@@ -42,7 +42,7 @@ export default defineConfig({
     },
   },
 
-  runner: {
+  webExt: {
     startUrls: [
       "https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif",
       "https://commons.wikimedia.org/wiki/File:A_weather_balloon_exploding.gif",

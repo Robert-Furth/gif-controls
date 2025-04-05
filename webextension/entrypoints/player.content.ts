@@ -1,9 +1,8 @@
 import "@/assets/player.css";
 
+import { ContentScriptContext, createShadowRootUi, defineContentScript } from "#imports";
 import { mount, unmount } from "svelte";
 import { browser } from "wxt/browser";
-import { ContentScriptContext, createShadowRootUi } from "wxt/client";
-import { defineContentScript } from "wxt/sandbox";
 
 import PlayerLoader from "@/components/PlayerLoader.svelte";
 import { isMessage } from "@/lib/messages";
@@ -27,7 +26,8 @@ export default defineContentScript({
 
       const imageElement =
         message.targetElementId !== undefined
-          ? browser.menus.getTargetElement(message.targetElementId)
+          ? // @ts-expect-error browser.menus is firefox-specific
+            browser.menus.getTargetElement(message.targetElementId)
           : rightClickTarget;
 
       if (!(imageElement instanceof HTMLImageElement)) return;

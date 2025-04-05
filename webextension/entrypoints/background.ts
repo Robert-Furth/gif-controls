@@ -1,17 +1,19 @@
-import { browser, Menus, Tabs } from "wxt/browser";
-import { defineBackground } from "wxt/sandbox";
+import { defineBackground } from "#imports";
+import { browser, Browser } from "wxt/browser";
 
 import { RightClickMessage } from "@/lib/messages";
 
+// @ts-expect-error browser.menus is firefox-specific
 const menus = import.meta.env.FIREFOX ? browser.menus : browser.contextMenus;
 const action = browser.action ?? browser.browserAction;
 
-function addControlsListener(info: Menus.OnClickData, tab?: Tabs.Tab) {
+function addControlsListener(info: Browser.contextMenus.OnClickData, tab?: Browser.tabs.Tab) {
   if (tab?.id === undefined || info.menuItemId !== "add-gif-controls") return;
 
   const message: RightClickMessage = {
     name: "right-click",
-    targetElementId: info.targetElementId, // undefined for chrome
+    // @ts-expect-error targetElementId is firefox-specific
+    targetElementId: info.targetElementId,
   };
 
   browser.tabs.sendMessage(tab.id, message);

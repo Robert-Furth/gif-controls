@@ -1,4 +1,4 @@
-import { defineUnlistedScript } from "wxt/sandbox";
+import { defineUnlistedScript } from "#imports";
 
 import { decode, Gif } from "@/lib/gif";
 

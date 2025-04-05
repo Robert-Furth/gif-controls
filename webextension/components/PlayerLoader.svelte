@@ -1,8 +1,8 @@
 <script lang="ts">
   import iconRevert from "@/assets/player-icons/revert.svg";
 
+  import { browser } from "#imports";
   import { onDestroy } from "svelte";
-  import { browser } from "wxt/browser";
 
   import type { WorkerInput, WorkerOutput } from "@/entrypoints/worker";
   import { DECODE_WORKER_PATH, WASM_NAME } from "@/lib/constants";
