@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="36"
+   height="36"
+   viewBox="0 0 9.5249999 9.525"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <g
+     id="layer1"
+     style="fill:#202020;fill-opacity:1">
+    <path
+       id="path449"
+       style="fill:#202020;fill-opacity:1;stroke-width:0.132292;stroke-linejoin:bevel;stroke-miterlimit:6.6;paint-order:stroke fill markers"
+       d="m 5.0270833,1.0583333 c -2.0457526,2e-7 -3.7041665,1.658414 -3.7041666,3.7041667 0.7629289,1.3502155 1.177707,1.3013807 1.8520833,0 -10e-8,-1.0228764 0.8292069,-1.8520834 1.8520833,-1.8520833 1.0228764,-10e-8 1.8520834,0.8292069 1.8520833,1.8520833 1e-7,1.0228764 -0.8292069,1.8520834 -1.8520833,1.8520833 C 4.8704221,6.6139472 4.7144242,6.5934574 4.5630289,6.5536051 L 4.0984578,8.3467773 C 4.4008377,8.4255605 4.7128665,8.4662133 5.0270833,8.4666666 7.072836,8.4666665 8.7312498,6.8082526 8.73125,4.7625 8.7312499,2.7167473 7.072836,1.0583334 5.0270833,1.0583333 Z" />
+    <path
+       id="path3906"
+       style="fill:#202020;fill-opacity:1;stroke-width:1.5875;stroke-linejoin:bevel;stroke-miterlimit:6.6;stroke-dasharray:none;paint-order:stroke fill markers"
+       d="M 2.2489586,8.2020836 3.1901233e-7,4.7625008 C 1.4993057,4.7625006 3.4368273,4.7625005 4.4979166,4.7625004 Z" />
+  </g>
+</svg>
