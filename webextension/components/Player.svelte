@@ -211,14 +211,22 @@
 
     e.preventDefault();
   }
+
+  function stopEvent(e: Event) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
 </script>
 
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
   class="wrapper"
   role="application"
   style:width="{curWidth}px"
   style:height="{curHeight}px"
   style:left="{cssOffsX}px"
+  onclick={stopEvent}
 >
   <canvas tabindex="0" {onkeydown} onclick={() => (isPaused = !isPaused)} bind:this={canvas}
   ></canvas>
