@@ -22,7 +22,7 @@ export const opts = {
   decodeInBackground: storage.defineItem<boolean>("local:opt:decodeInBackground", {
     fallback: true,
   }),
-};
+} as const;
 
 export type PlayerOptions = {
   defaultCounterType: CounterType;
@@ -34,7 +34,7 @@ export function watchOption<T>(
   initialValue?: T,
 ) {
   const store = writable(initialValue ?? option.fallback);
-  option.getValue().then((v) => store.set(v));
+  void option.getValue().then((v) => store.set(v));
 
   onMount(() => {
     return option.watch((v) => store.set(v));

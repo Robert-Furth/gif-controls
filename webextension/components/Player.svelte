@@ -38,7 +38,7 @@
 
   // Player options
   let speedFactor = $state(1);
-  let counterType: CounterType = $state("none");
+  let counterType: CounterType = $state(opts.defaultCounterType.fallback);
   let reverse = $state(false);
 
   let minDelay = watchOption(opts.minFrameTime);
@@ -84,7 +84,10 @@
 
   // Handle options
   onMount(() => {
-    opts.defaultCounterType.getValue().then((v) => (counterType = v));
+    opts.defaultCounterType
+      .getValue()
+      .then((v) => (counterType = v))
+      .catch(() => {});
   });
 
   // Update canvas on frameIndex update
@@ -97,8 +100,8 @@
   });
 
   // Main animation function
-  async function animate(curTime: DOMHighResTimeStamp) {
-    await (async () => {
+  function animate(curTime: DOMHighResTimeStamp) {
+    (() => {
       if (isPaused || isScrubbing || prevTime === undefined) {
         return;
       }

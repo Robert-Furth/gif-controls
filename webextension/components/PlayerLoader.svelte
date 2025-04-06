@@ -71,7 +71,7 @@
             reject(e.data.error);
             break;
           default:
-            reject("unexpected message!");
+            reject(new Error("unexpected message!"));
         }
       };
 

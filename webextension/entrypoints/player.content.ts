@@ -7,12 +7,13 @@ import { browser } from "wxt/browser";
 import PlayerLoader from "@/components/PlayerLoader.svelte";
 import { isMessage } from "@/lib/messages";
 import { opts } from "@/lib/options";
+import { menus } from "@/lib/polyfills";
 
 export default defineContentScript({
   matches: ["<all_urls>"],
   cssInjectionMode: "ui",
 
-  async main(ctx) {
+  main(ctx) {
     let rightClickTarget: EventTarget | null = null;
     if (!import.meta.env.FIREFOX) {
       ctx.addEventListener(document, "contextmenu", (evt) => {
@@ -26,8 +27,7 @@ export default defineContentScript({
 
       const imageElement =
         message.targetElementId !== undefined
-          ? // @ts-expect-error browser.menus is firefox-specific
-            browser.menus.getTargetElement(message.targetElementId)
+          ? menus.getTargetElement(message.targetElementId)
           : rightClickTarget;
 
       if (!(imageElement instanceof HTMLImageElement)) return;
@@ -117,7 +117,7 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
       if (app === undefined) {
         throw new Error("Cannot unmount svelte component since it is undefined!");
       }
-      unmount(app);
+      void unmount(app);
       observer.disconnect();
       ui.shadowHost.replaceWith(target);
 

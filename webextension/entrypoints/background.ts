@@ -1,11 +1,7 @@
-import { defineBackground } from "#imports";
-import { browser, Browser } from "wxt/browser";
+import { browser, Browser, defineBackground } from "#imports";
 
 import { RightClickMessage } from "@/lib/messages";
-
-// @ts-expect-error browser.menus is firefox-specific
-const menus = import.meta.env.FIREFOX ? browser.menus : browser.contextMenus;
-const action = browser.action ?? browser.browserAction;
+import { action, menus } from "@/lib/polyfills";
 
 function addControlsListener(info: Browser.contextMenus.OnClickData, tab?: Browser.tabs.Tab) {
   if (tab?.id === undefined || info.menuItemId !== "add-gif-controls") return;
@@ -13,16 +9,16 @@ function addControlsListener(info: Browser.contextMenus.OnClickData, tab?: Brows
   const message: RightClickMessage = {
     name: "right-click",
     // @ts-expect-error targetElementId is firefox-specific
-    targetElementId: info.targetElementId,
+    targetElementId: info.targetElementId as number,
   };
 
-  browser.tabs.sendMessage(tab.id, message);
+  void browser.tabs.sendMessage(tab.id, message);
 }
 
 export default defineBackground(() => {
   menus.onClicked.addListener(addControlsListener);
 
-  action.onClicked.addListener(() => browser.runtime.openOptionsPage());
+  action.onClicked.addListener(() => void browser.runtime.openOptionsPage());
 
   browser.runtime.onInstalled.addListener(() => {
     menus.create({
