@@ -12,6 +12,26 @@ type BindOptionParams<T> = {
   resetId?: string;
 };
 
+function reportError(control: HTMLElement, err: unknown) {
+  const div = control.closest(".control");
+  if (div === null) return;
+
+  let errDiv = div.querySelector(".error");
+  if (errDiv === null) {
+    errDiv = document.createElement("div");
+    errDiv.className = "error";
+    div.appendChild(errDiv);
+  }
+
+  errDiv.textContent = "Error: " + (err instanceof Error ? err.message : (err as string));
+}
+
+function clearError(control: HTMLElement) {
+  const div = control.closest(".control");
+  if (div === null) return;
+  div.querySelector(".error")?.remove();
+}
+
 function bindOption<T extends ToString>(
   options: BindOptionParams<T> & {
     converter: (value: string) => undefined | T;
@@ -24,19 +44,27 @@ function bindOption<T extends ToString>(
   if (!(element instanceof HTMLInputElement) && !(element instanceof HTMLSelectElement))
     throw new Error();
 
-  storageItem.getValue().then((val) => (element.value = val.toString()));
+  storageItem
+    .getValue()
+    .then((val) => (element.value = val.toString()))
+    .catch((e) => reportError(element, e));
 
-  element.addEventListener("input", () => {
-    const val = converter(element.value);
+  element.addEventListener("input", async () => {
+    try {
+      const val = converter(element.value);
 
-    if (val !== undefined) {
-      element.setCustomValidity("");
-      element.classList.remove("invalid");
-      storageItem.setValue(val);
-    } else {
-      element.setCustomValidity(invalidMessage);
-      element.reportValidity();
-      element.classList.add("invalid");
+      if (val !== undefined) {
+        element.setCustomValidity("");
+        element.classList.remove("invalid");
+        await storageItem.setValue(val);
+      } else {
+        element.setCustomValidity(invalidMessage);
+        element.reportValidity();
+        element.classList.add("invalid");
+      }
+      clearError(element);
+    } catch (e) {
+      reportError(element, e);
     }
   });
 
@@ -44,9 +72,14 @@ function bindOption<T extends ToString>(
   const resetButton = document.getElementById(resetId);
   if (!resetButton) return;
 
-  resetButton.addEventListener("click", () => {
-    storageItem.setValue(storageItem.fallback);
-    element.value = storageItem.fallback.toString();
+  resetButton.addEventListener("click", async () => {
+    try {
+      await storageItem.setValue(storageItem.fallback);
+      element.value = storageItem.fallback.toString();
+      clearError(element);
+    } catch (e) {
+      reportError(element, e);
+    }
   });
 }
 
@@ -57,19 +90,32 @@ function bindCheckbox(options: BindOptionParams<boolean> & { invert?: boolean })
   if (!(element instanceof HTMLInputElement)) throw new Error();
   const inv = (v: boolean) => (invert ? !v : v);
 
-  storageItem.getValue().then((val) => (element.checked = inv(val)));
+  storageItem
+    .getValue()
+    .then((val) => (element.checked = inv(val)))
+    .catch((e) => reportError(element, e));
 
-  element.addEventListener("input", () => {
-    storageItem.setValue(inv(element.checked));
+  element.addEventListener("input", async () => {
+    try {
+      await storageItem.setValue(inv(element.checked));
+      clearError(element);
+    } catch (e) {
+      reportError(element, e);
+    }
   });
 
   if (!resetId) return;
   const resetButton = document.getElementById(resetId);
   if (!resetButton) return;
 
-  resetButton.addEventListener("click", () => {
-    storageItem.setValue(storageItem.fallback);
-    element.checked = inv(storageItem.fallback);
+  resetButton.addEventListener("click", async () => {
+    try {
+      await storageItem.setValue(storageItem.fallback);
+      element.checked = inv(storageItem.fallback);
+      clearError(element);
+    } catch (e) {
+      reportError(element, e);
+    }
   });
 }
 

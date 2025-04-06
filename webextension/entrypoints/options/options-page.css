@@ -30,11 +30,12 @@ body {
 }
 
 .control {
-  display: flex;
-  justify-content: flex-end;
-  align-items: baseline;
-  gap: 0.75em;
   height: max-content;
+  text-align: right;
+}
+
+.control > * {
+  margin-left: 0.75em;
 }
 
 .reset {
@@ -42,9 +43,10 @@ body {
 }
 
 .reset button {
-  height: 22px;
-  width: 23px;
+  height: 21px;
+  width: 22px;
   padding: 1px;
+  margin-top: 2px;
 }
 
 .reset button img {
@@ -64,6 +66,11 @@ body {
     font-style: normal;
     font-weight: 600;
   }
+}
+
+.error {
+  color: red;
+  text-align: right;
 }
 
 @media (max-width: 550px) {
