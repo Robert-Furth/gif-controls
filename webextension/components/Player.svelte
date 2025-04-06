@@ -13,6 +13,7 @@
   import { type CounterType, opts, watchOption } from "@/lib/options";
 
   import IconButton from "./IconButton.svelte";
+  import MoveHandle from "./MoveHandle.svelte";
   import Options from "./Options.svelte";
   import ProgressBar from "./ProgressBar.svelte";
   import Resizer from "./Resizer.svelte";
@@ -56,7 +57,8 @@
 
   let curWidth = $state(defaultWidth);
   let curHeight = $state(defaultHeight);
-  let cssOffsX = $derived((defaultWidth - curWidth) / 2);
+  let cssOffsX = $state(0);
+  let cssOffsY = $state(0);
 
   const isAnimated = gif.numFrames > 1;
 
@@ -229,6 +231,7 @@
   style:width="{curWidth}px"
   style:height="{curHeight}px"
   style:left="{cssOffsX}px"
+  style:top="{cssOffsY}px"
   onclick={stopEvent}
 >
   <canvas tabindex="0" {onkeydown} onclick={() => (isPaused = !isPaused)} bind:this={canvas}
@@ -243,17 +246,20 @@
         </div>
       {/if}
     </div>
-    {#if curWidth !== defaultWidth || curHeight !== defaultHeight}
+    {#if curWidth !== defaultWidth || curHeight !== defaultHeight || cssOffsX !== 0 || cssOffsY !== 0}
       <IconButton
-        title="Reset Size"
+        title="Reset Size and Position"
         src={iconResetSize}
         style="padding: 2px;"
         onclick={() => {
           curWidth = defaultWidth;
           curHeight = defaultHeight;
+          cssOffsX = 0;
+          cssOffsY = 0;
         }}
       />
     {/if}
+    <MoveHandle bind:x={cssOffsX} bind:y={cssOffsY} />
   </div>
   <div class={["player-controls", "controls-bottom", forceShow && "force-show"]}>
     <IconButton

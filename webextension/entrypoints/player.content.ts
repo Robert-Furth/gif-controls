@@ -81,6 +81,7 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
         shadowHost.style.minHeight = `${minHeight}px`;
         shadowHost.style.display = style.display === "inline" ? "inline-block" : style.display;
         shadowHost.style.boxSizing = "border-box";
+        shadowHost.style.textAlign = "left";
       }
 
       const parent = anchor.parentElement;
