@@ -18,10 +18,6 @@ export const opts = {
   }),
 
   minFrameTime: storage.defineItem<number>("local:opt:minFrameTime", { fallback: 2 }),
-
-  decodeInBackground: storage.defineItem<boolean>("local:opt:decodeInBackground", {
-    fallback: true,
-  }),
 } as const;
 
 export type PlayerOptions = {

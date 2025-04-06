@@ -83,6 +83,7 @@ function bindOption<T extends ToString>(
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function bindCheckbox(options: BindOptionParams<boolean> & { invert?: boolean }) {
   const { elementId, storageItem, resetId, invert } = options;
   const element = document.getElementById(elementId);
@@ -161,8 +162,4 @@ bindOption({
   storageItem: opts.minFrameTime,
   converter: toNonnegativeInt,
   invalidMessage: "Must be a nonnegative whole number.",
-});
-bindCheckbox({
-  elementId: "decode-in-background",
-  storageItem: opts.decodeInBackground,
 });

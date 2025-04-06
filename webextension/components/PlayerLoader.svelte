@@ -6,8 +6,7 @@
 
   import type { WorkerInput, WorkerOutput } from "@/entrypoints/worker";
   import { DECODE_WORKER_PATH, WASM_NAME } from "@/lib/constants";
-  import { decode, type Gif, prepareImageData } from "@/lib/gif";
-  import { opts } from "@/lib/options";
+  import { type Gif, prepareImageData } from "@/lib/gif";
 
   import IconButton from "./IconButton.svelte";
   import Player from "./Player.svelte";
@@ -44,9 +43,7 @@
     const bytes = await response.bytes();
 
     stateText = "Decoding...";
-    const gif = (await opts.decodeInBackground.getValue())
-      ? await decodeInWorker(bytes)
-      : await decode(bytes, browser.runtime.getURL(`/${WASM_NAME}`));
+    const gif = await decodeInWorker(bytes);
 
     stateText = "Processing...";
     const frameArr = await prepareImageData(gif);
