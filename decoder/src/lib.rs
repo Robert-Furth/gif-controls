@@ -356,7 +356,7 @@ impl FrameDecoder {
 
         let has_palette = packed & 0x80 != 0;
         let palette_size = 1usize << ((packed & 0x7) + 1);
-        self.interlaced = packed & 0x70 != 0;
+        self.interlaced = packed & 0x40 != 0;
 
         if has_palette {
             self.palette = Some(ColorTable::read(&mut rdr, palette_size)?);

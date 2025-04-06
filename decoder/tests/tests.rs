@@ -34,6 +34,13 @@ mod valid_gifs {
     }
 
     #[test]
+    pub fn interlaced2() {
+        let decoded = read_gif_file(test_input("interlaced2.gif")).unwrap();
+        let expected = read_bin_file(test_output("interlaced2.bin.xz"));
+        compare_frames(&decoded, &expected);
+    }
+
+    #[test]
     pub fn one_bpp() {
         let decoded = read_gif_file(test_input("1bpp.gif")).unwrap();
         compare_meta(&decoded, test_output("1bpp.json"));
