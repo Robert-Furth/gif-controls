@@ -57,8 +57,10 @@
 
   let curWidth = $state(defaultWidth);
   let curHeight = $state(defaultHeight);
-  let cssOffsX = $state(0);
-  let cssOffsY = $state(0);
+  let baseOffsX = $state(0);
+  let baseOffsY = $state(0);
+  let offsX = $derived(baseOffsX + (defaultWidth - curWidth) * 0.5);
+  let offsY = $derived(baseOffsY + (defaultHeight - curHeight) * 0.5);
 
   const isAnimated = gif.numFrames > 1;
 
@@ -240,8 +242,8 @@
   role="application"
   style:width="{curWidth}px"
   style:height="{curHeight}px"
-  style:left="{cssOffsX}px"
-  style:top="{cssOffsY}px"
+  style:left="{offsX}px"
+  style:top="{offsY}px"
   onclick={stopEvent}
   onkeypress={stopEvent}
 >
@@ -257,7 +259,7 @@
         </div>
       {/if}
     </div>
-    {#if curWidth !== defaultWidth || curHeight !== defaultHeight || cssOffsX !== 0 || cssOffsY !== 0}
+    {#if curWidth !== defaultWidth || curHeight !== defaultHeight || baseOffsX !== 0 || baseOffsY !== 0}
       <IconButton
         title="Reset Size and Position"
         src={iconResetSize}
@@ -265,12 +267,12 @@
         onclick={() => {
           curWidth = defaultWidth;
           curHeight = defaultHeight;
-          cssOffsX = 0;
-          cssOffsY = 0;
+          baseOffsX = 0;
+          baseOffsY = 0;
         }}
       />
     {/if}
-    <MoveHandle bind:x={cssOffsX} bind:y={cssOffsY} />
+    <MoveHandle bind:x={baseOffsX} bind:y={baseOffsY} />
   </div>
   <div class={["player-controls", "controls-bottom", forceShow && "force-show"]}>
     <IconButton
