@@ -219,7 +219,17 @@
 
   function stopEvent(e: Event) {
     e.stopPropagation();
-    e.preventDefault();
+
+    const allowDefault =
+      e.type === "click" && e.target instanceof HTMLInputElement && e.target.type === "checkbox";
+    if (!allowDefault) {
+      e.preventDefault();
+    }
+
+    // Clicking a label attached to a control should still activate that control
+    if (e.type === "click" && e.target instanceof HTMLLabelElement && e.target.control !== null) {
+      e.target.control.click();
+    }
   }
 </script>
 
@@ -233,6 +243,7 @@
   style:left="{cssOffsX}px"
   style:top="{cssOffsY}px"
   onclick={stopEvent}
+  onkeypress={stopEvent}
 >
   <canvas tabindex="0" {onkeydown} onclick={() => (isPaused = !isPaused)} bind:this={canvas}
   ></canvas>
