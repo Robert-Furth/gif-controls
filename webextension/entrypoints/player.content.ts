@@ -58,7 +58,6 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
   const minHeight = await opts.minPlayerHeight.getValue();
 
   let shouldRestoreDraggable = false;
-  let originalHref: string | undefined = undefined;
 
   const ui = await createShadowRootUi(ctx, {
     name: "gif-viewer",
@@ -85,16 +84,9 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
       }
 
       const parent = anchor.parentElement;
-      if (parent !== null) {
-        if (parent.draggable) {
-          parent.draggable = false;
-          shouldRestoreDraggable = true;
-        }
-
-        if (parent.nodeName === "A") {
-          originalHref = (parent as HTMLAnchorElement).href;
-          (parent as HTMLAnchorElement).href = "javascript:void(0)";
-        }
+      if (parent !== null && parent.draggable) {
+        parent.draggable = false;
+        shouldRestoreDraggable = true;
       }
 
       anchor.replaceWith(shadowHost);
@@ -122,13 +114,8 @@ async function createPlayer(ctx: ContentScriptContext, target: HTMLElement, imgS
       observer.disconnect();
       ui.shadowHost.replaceWith(target);
 
-      if (target.parentElement) {
-        if (shouldRestoreDraggable) {
-          target.parentElement.draggable = true;
-        }
-        if (originalHref !== undefined) {
-          target.parentElement.setAttribute("href", originalHref);
-        }
+      if (target.parentElement && shouldRestoreDraggable) {
+        target.parentElement.draggable = true;
       }
     },
   });
