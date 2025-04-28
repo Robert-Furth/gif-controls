@@ -6,6 +6,8 @@
   type Props = { width: number; height: number };
   let { width = $bindable(), height = $bindable() }: Props = $props();
 
+  const SCALE_SPEED = 1.8;
+
   let isResizing = $state(false);
   const aspectRatio = width / height;
 
@@ -30,8 +32,8 @@
   function resize(e: MouseEvent) {
     if (!isResizing) return;
 
-    const dx = prevX ? e.clientX - prevX : 0;
-    const dy = prevY ? e.clientY - prevY : 0;
+    const dx = (prevX ? e.clientX - prevX : 0) * SCALE_SPEED;
+    const dy = (prevY ? e.clientY - prevY : 0) * SCALE_SPEED;
     prevX = e.clientX;
     prevY = e.clientY;
 

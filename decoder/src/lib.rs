@@ -29,6 +29,9 @@ pub struct DecodedGif {
     #[wasm_bindgen(readonly, js_name = maxLoops)]
     pub max_loops: Option<u16>,
 
+    #[wasm_bindgen(readonly, getter_with_clone, js_name = bgColor)]
+    pub bg_color: String,
+
     #[wasm_bindgen(readonly, js_name = numFrames)]
     pub num_frames: usize,
     #[wasm_bindgen(skip)]
@@ -305,6 +308,7 @@ impl<R: Read> Decoder<R> {
             canvas_height: self.canvas_height,
             max_loops: self.max_loops,
             num_frames: self.frames.len(),
+            bg_color: self.bg_color.to_css_string(),
             frames: self.frames,
         }
     }
@@ -561,6 +565,10 @@ impl Color {
         } else {
             [0; 4]
         }
+    }
+
+    fn to_css_string(&self) -> String {
+        format!("rgb({}, {}, {})", self.0, self.1, self.2)
     }
 }
 

@@ -44,7 +44,7 @@ impl<Inner: Iterator<Item = u8>> LZWIterator<Inner> {
 
         let n = 1 << min_code_size;
         let code_table = (0..n)
-            // i is at most n - 1 == (1 << 8) - 1 == 0x255, so unwrapping is fine
+            // i is at most n - 1 == (1 << 8) - 1 == 255, so unwrapping is fine
             .map(|i| vec![i.try_into().unwrap()])
             // Add dummy items so we can index past clear/end codes
             .chain([vec![], vec![]])

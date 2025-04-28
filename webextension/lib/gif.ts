@@ -10,6 +10,7 @@ export type Gif = {
   canvasHeight: number;
   maxLoops?: number;
   numFrames: number;
+  bgColor: string;
   frames: Frame[];
 };
 
@@ -29,6 +30,7 @@ export async function decode(arr: Uint8Array, wasm_path: string): Promise<Gif> {
     canvasHeight: g.canvasHeight,
     maxLoops: g.maxLoops,
     numFrames: g.numFrames,
+    bgColor: g.bgColor,
     frames,
   };
 }

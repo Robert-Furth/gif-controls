@@ -23,9 +23,6 @@
 
   function move(e: MouseEvent) {
     if (!isMoving) return;
-    // dpr = phys/css
-    // css * dpr = phys
-    // css = phys / dpr
     const dx = prevX ? e.clientX - prevX : 0;
     const dy = prevY ? e.clientY - prevY : 0;
     x += dx;
