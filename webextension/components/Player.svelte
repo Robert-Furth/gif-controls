@@ -41,6 +41,7 @@
   let speedFactor = $state(1);
   let counterType: CounterType = $state(opts.defaultCounterType.fallback);
   let reverse = $state(false);
+  let lockPosition = $state(opts.defaultLockState.fallback);
 
   let minDelay = watchOption(opts.minFrameTime);
 
@@ -91,6 +92,11 @@
     opts.defaultCounterType
       .getValue()
       .then((v) => (counterType = v))
+      .catch(() => {});
+
+    opts.defaultLockState
+      .getValue()
+      .then((v) => (lockPosition = v))
       .catch(() => {});
   });
 
@@ -255,11 +261,11 @@
       <IconButton title="Options" src={iconOptions} onclick={() => (optionsOpen = !optionsOpen)} />
       {#if optionsOpen}
         <div style="position: relative; top: var(--controls-padding);">
-          <Options bind:speedFactor bind:counterType bind:reverse />
+          <Options bind:speedFactor bind:counterType bind:reverse bind:lockPosition />
         </div>
       {/if}
     </div>
-    {#if curWidth !== defaultWidth || curHeight !== defaultHeight || baseOffsX !== 0 || baseOffsY !== 0}
+    {#if !lockPosition && (curWidth !== defaultWidth || curHeight !== defaultHeight || baseOffsX !== 0 || baseOffsY !== 0)}
       <IconButton
         title="Reset Size and Position"
         src={iconResetSize}
@@ -272,7 +278,9 @@
         }}
       />
     {/if}
-    <MoveHandle bind:x={baseOffsX} bind:y={baseOffsY} />
+    {#if !lockPosition}
+      <MoveHandle bind:x={baseOffsX} bind:y={baseOffsY} />
+    {/if}
   </div>
   <div class={["player-controls", "controls-bottom", forceShow && "force-show"]}>
     <IconButton
@@ -310,6 +318,8 @@
         {msToMinSec(progressMs)}
       </div>
     {/if}
-    <Resizer bind:width={curWidth} bind:height={curHeight} />
+    {#if !lockPosition}
+      <Resizer bind:width={curWidth} bind:height={curHeight} />
+    {/if}
   </div>
 </div>

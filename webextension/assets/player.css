@@ -139,12 +139,14 @@ button.icon-button > img {
 
   display: grid;
   grid-template-columns: auto max-content;
-  grid-auto-rows: 2em;
-  line-height: 2em;
+  grid-auto-rows: min-content;
+  line-height: 1.5em;
   row-gap: 0.25em;
   column-gap: 0.5em;
   align-items: center;
   z-index: 1;
+
+  user-select: none;
 }
 
 .speed-control {
@@ -157,12 +159,17 @@ button.icon-button > img {
 
 .options-dropdown .span {
   grid-column: 1 / -1;
+  width: fit-content;
 }
 
 input[type="range"] {
   vertical-align: middle;
   margin: 0;
   width: 6em;
+}
+
+input[type="checkbox"] {
+  vertical-align: middle;
 }
 
 .resize-handle {

@@ -13,16 +13,16 @@
   </head>
 
   <body>
-    <h2>Player</h2>
+    <h2>Player Options</h2>
     <div class="opt-section">
-      <div class="control">
-        Default counter type:
+      <label class="control">
+        <label for="default-counter-type">Default counter type:</label>
         <select id="default-counter-type">
           <option value="frame">Frame</option>
           <option value="time">Time</option>
           <option value="none">None</option>
         </select>
-      </div>
+      </label>
       <div class="reset">
         <button id="reset-counter-type" title="Reset to default">
           <img src="../../assets/reset.svg" />
@@ -33,7 +33,7 @@
         current frame, the current elapsed time, or no counter at all.
       </div>
       <div class="control">
-        Minimum size:
+        <span>Minimum size:</span>
         <span>
           <input type="number" min="0" id="min-width" /> &times;
           <input type="number" min="0" id="min-height" />
@@ -46,7 +46,7 @@
       </div>
       <div class="desc">The minimum width and height of the player in pixels.</div>
       <div class="control">
-        Minimum frame delay:
+        <label for="min-frame-delay">Minimum frame delay:</label>
         <span><input type="number" min="0" id="min-frame-delay" /></span>
       </div>
       <div class="reset">
@@ -55,6 +55,16 @@
         </button>
       </div>
       <div class="desc">Minimum amount of time between GIF frames, in hundredths of a second.</div>
+    </div>
+    <div class="opt-section">
+      <div class="control">
+        <label for="lock-size-and-pos">Lock by default:</label
+        ><input type="checkbox" id="lock-size-and-pos" />
+      </div>
+      <div class="desc">
+        Whether to lock the player's size & position in place by default. You can always lock/unlock
+        a player using the player's options dropdown.
+      </div>
     </div>
   </body>
 </html>

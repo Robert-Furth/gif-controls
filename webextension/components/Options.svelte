@@ -7,11 +7,13 @@
     speedFactor: number;
     counterType: CounterType;
     reverse: boolean;
+    lockPosition: boolean;
   } & Record<string, unknown>;
   let {
     speedFactor = $bindable(),
     counterType = $bindable(),
     reverse = $bindable(),
+    lockPosition = $bindable(),
     ...rest
   }: Props = $props();
 </script>
@@ -22,8 +24,6 @@
     <input type="range" min="0.25" max="2" step="0.25" bind:value={speedFactor} />
     {(speedFactor * 100).toFixed(0)}%
   </div>
-  <div class="right">Reverse:</div>
-  <div><input type="checkbox" bind:checked={reverse} /></div>
   <div class="right">Counter:</div>
   <div>
     <select bind:value={counterType}>
@@ -32,4 +32,8 @@
       <option value="none">None</option>
     </select>
   </div>
+  <label class="span">Reverse: <input type="checkbox" bind:checked={reverse} /></label>
+  <label class="span"
+    >Lock Size &amp; Position: <input type="checkbox" bind:checked={lockPosition} /></label
+  >
 </div>

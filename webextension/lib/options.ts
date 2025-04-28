@@ -10,7 +10,7 @@ export const opts = {
   }),
 
   minPlayerWidth: storage.defineItem<number>("local:opt:minWidth", {
-    fallback: 100,
+    fallback: 120,
   }),
 
   minPlayerHeight: storage.defineItem<number>("local:opt:minHeight", {
@@ -18,6 +18,10 @@ export const opts = {
   }),
 
   minFrameTime: storage.defineItem<number>("local:opt:minFrameTime", { fallback: 2 }),
+
+  defaultLockState: storage.defineItem<boolean>("local:opt:defaultPosAndSizeLock", {
+    fallback: false,
+  }),
 } as const;
 
 export type PlayerOptions = {

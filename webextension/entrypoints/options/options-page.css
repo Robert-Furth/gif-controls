@@ -26,16 +26,17 @@ body {
 .opt-section {
   display: grid;
   grid-template-columns: max-content auto 1fr;
-  row-gap: 0.5em;
 }
 
 .control {
+  display: flex;
+  justify-content: space-between;
   height: max-content;
-  text-align: right;
+  margin-bottom: 0.5em;
 }
 
-.control > * {
-  margin-left: 0.75em;
+.control > :not(:first-child) {
+  margin-left: 1em;
 }
 
 .reset {
@@ -43,10 +44,9 @@ body {
 }
 
 .reset button {
-  height: 21px;
+  height: 22px;
   width: 22px;
   padding: 1px;
-  margin-top: 2px;
 }
 
 .reset button img {
@@ -58,14 +58,14 @@ body {
 .desc {
   font-style: italic;
   color: var(--desc-text);
-  margin-left: 1.75em;
+  margin: 0 0 0.5em 1.75em;
   grid-column: 3;
   text-align: left;
+}
 
-  em {
-    font-style: normal;
-    font-weight: 600;
-  }
+.desc em {
+  font-style: normal;
+  font-weight: 600;
 }
 
 .error {
@@ -73,7 +73,7 @@ body {
   text-align: right;
 }
 
-@media (max-width: 550px) {
+@media (max-width: 600px) {
   .opt-section {
     grid-template-columns: 1fr auto;
   }
@@ -84,7 +84,7 @@ body {
 
   .desc {
     grid-column: 1 / -1;
-    margin: 0.5em 1em 1em;
+    margin: 0 0 1.5em;
     padding: 1em;
     border-radius: 1em;
     background: var(--desc-background);
@@ -98,6 +98,10 @@ body {
 input[type="text"],
 input[type="number"] {
   width: 5em;
+}
+
+input[type="checkbox"] {
+  margin-bottom: -2px;
 }
 
 #min-width,
