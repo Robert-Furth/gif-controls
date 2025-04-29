@@ -103,7 +103,7 @@
   // Update canvas on frameIndex update
   $effect(() => {
     const ctx = canvas.getContext("2d");
-    if (ctx !== null) {
+    if (ctx !== null && frameArr.length > 0) {
       ctx.imageSmoothingEnabled = false;
       ctx.putImageData(frameArr[frameIndex], 0, 0);
     }

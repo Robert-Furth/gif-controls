@@ -20,7 +20,8 @@ type WorkerOutputErr = {
 export type WorkerOutput = WorkerOutputOk | WorkerOutputErr;
 
 function asError(e: unknown): Error {
-  if (e instanceof Error) return e;
+  // Errors thrown from WASM were causing problems in the component, so wrap it in a new Error
+  if (e instanceof Error) return new Error(e.message);
   return new Error(JSON.stringify(e));
 }
 

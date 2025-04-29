@@ -96,7 +96,7 @@
 {:catch e}
   <div class="bgimg" style:background-image={loadingBackground("#a008")}>
     <div>Error!</div>
-    <div>{e instanceof Error && e.name === "Error" ? e.message : e}</div>
+    <div>{e?.message ?? e}</div>
     {@render revertButton()}
   </div>
 {/await}
