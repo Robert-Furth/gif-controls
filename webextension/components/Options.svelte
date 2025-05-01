@@ -45,5 +45,6 @@
   <label class="span"
     >Lock Size &amp; Position: <input type="checkbox" bind:checked={lockPosition} /></label
   >
-  <a class="span" href="#" onclick={openOptions} onkeypress={openOptions}>Extension Options</a>
+  <!-- svelte-ignore a11y_invalid_attribute -->
+  <a class="span" href="#" onclick={openOptions} onkeypress={openOptions}>Extension Options...</a>
 </div>
