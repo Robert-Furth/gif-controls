@@ -1,6 +1,6 @@
 import { browser, Browser, defineBackground } from "#imports";
 
-import { RightClickMessage } from "@/lib/messages";
+import { isMessage, RightClickMessage } from "@/lib/messages";
 import { action, menus } from "@/lib/polyfills";
 
 function addControlsListener(info: Browser.contextMenus.OnClickData, tab?: Browser.tabs.Tab) {
@@ -27,5 +27,11 @@ export default defineBackground(() => {
       contexts: ["image"],
       targetUrlPatterns: ["*://*/*.gif", "*://*/*.gif?*", "file://*/*.gif"],
     });
+  });
+
+  browser.runtime.onMessage.addListener((message) => {
+    if (isMessage(message) && message.name === "open-options") {
+      void browser.runtime.openOptionsPage();
+    }
   });
 });

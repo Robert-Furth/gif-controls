@@ -162,6 +162,14 @@ button.icon-button > img {
   width: fit-content;
 }
 
+.options-dropdown a {
+  color: #50c0ff;
+}
+
+.options-dropdown a:active {
+  color: #5070ff;
+}
+
 input[type="range"] {
   vertical-align: middle;
   margin: 0;

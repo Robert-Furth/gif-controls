@@ -229,7 +229,9 @@
     e.stopPropagation();
 
     const allowDefault =
-      e.type === "click" && e.target instanceof HTMLInputElement && e.target.type === "checkbox";
+      e.type === "click" &&
+      ((e.target instanceof HTMLInputElement && e.target.type === "checkbox") ||
+        e.target instanceof HTMLAnchorElement);
     if (!allowDefault) {
       e.preventDefault();
     }

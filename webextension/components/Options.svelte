@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { browser } from "#imports";
   import { slide } from "svelte/transition";
 
+  import type { OpenOptionsMessage } from "@/lib/messages";
   import type { CounterType } from "@/lib/options";
 
   type Props = {
@@ -16,6 +18,13 @@
     lockPosition = $bindable(),
     ...rest
   }: Props = $props();
+
+  function openOptions(e: Event) {
+    e.preventDefault();
+    if (e instanceof KeyboardEvent && e.key !== "Enter") return;
+
+    browser.runtime.sendMessage({ name: "open-options" } satisfies OpenOptionsMessage);
+  }
 </script>
 
 <div transition:slide={{ axis: "y" }} class="options-dropdown" {...rest}>
@@ -36,4 +45,5 @@
   <label class="span"
     >Lock Size &amp; Position: <input type="checkbox" bind:checked={lockPosition} /></label
   >
+  <a class="span" href="#" onclick={openOptions} onkeypress={openOptions}>Extension Options</a>
 </div>
