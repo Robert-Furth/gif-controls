@@ -15,9 +15,6 @@ export default defineConfig({
     name: "Gif Controls",
     permissions: [browser === "firefox" ? "menus" : "contextMenus", "storage"],
     host_permissions: ["<all_urls>"],
-    action: {
-      default_title: "GIF Controls Options",
-    },
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'",
     },
@@ -50,6 +47,7 @@ export default defineConfig({
       // "https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif",
       "https://commons.wikimedia.org/wiki/File:A_weather_balloon_exploding.gif",
       "https://en.wikipedia.org/wiki/GIF",
+      "https://commons.wikimedia.org/wiki/Category:GIF_file_format",
     ],
   },
 });

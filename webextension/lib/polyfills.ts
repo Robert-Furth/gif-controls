@@ -10,5 +10,3 @@ export const menus = (
       browser.menus
     : browser.contextMenus
 ) as Menus;
-
-export const action = browser.action ?? browser.browserAction;

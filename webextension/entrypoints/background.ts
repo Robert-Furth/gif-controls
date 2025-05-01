@@ -1,7 +1,7 @@
 import { browser, Browser, defineBackground } from "#imports";
 
 import { isMessage, RightClickMessage } from "@/lib/messages";
-import { action, menus } from "@/lib/polyfills";
+import { menus } from "@/lib/polyfills";
 
 function addControlsListener(info: Browser.contextMenus.OnClickData, tab?: Browser.tabs.Tab) {
   if (tab?.id === undefined || info.menuItemId !== "add-gif-controls") return;
@@ -17,8 +17,6 @@ function addControlsListener(info: Browser.contextMenus.OnClickData, tab?: Brows
 
 export default defineBackground(() => {
   menus.onClicked.addListener(addControlsListener);
-
-  action.onClicked.addListener(() => void browser.runtime.openOptionsPage());
 
   browser.runtime.onInstalled.addListener(() => {
     menus.create({
