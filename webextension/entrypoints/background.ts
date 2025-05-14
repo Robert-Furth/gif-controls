@@ -1,7 +1,7 @@
 import { browser, Browser, defineBackground } from "#imports";
 
 import { isMessage, RightClickMessage } from "@/lib/messages";
-import { menus } from "@/lib/polyfills";
+import { menus } from "@/lib/utils";
 
 function addControlsListener(info: Browser.contextMenus.OnClickData, tab?: Browser.tabs.Tab) {
   if (tab?.id === undefined || info.menuItemId !== "add-gif-controls") return;

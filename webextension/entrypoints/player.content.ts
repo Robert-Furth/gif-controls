@@ -7,7 +7,7 @@ import { browser } from "wxt/browser";
 import PlayerLoader from "@/components/PlayerLoader.svelte";
 import { isMessage } from "@/lib/messages";
 import { opts } from "@/lib/options";
-import { menus } from "@/lib/polyfills";
+import { menus } from "@/lib/utils";
 
 export default defineContentScript({
   matches: ["<all_urls>"],
