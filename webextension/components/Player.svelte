@@ -55,7 +55,7 @@
     return ts;
   });
   let durationMs = $derived(timestamps[timestamps.length - 1]);
-  let skipAmount = $derived(Math.min(durationMs / 6, 1000));
+  const skipAmount = 1000;
 
   let curWidth = $state(defaultWidth);
   let curHeight = $state(defaultHeight);
@@ -200,7 +200,7 @@
         if (e.shiftKey) {
           incFrame();
         } else {
-          progressMs = addWraparound(progressMs, skipAmount, durationMs);
+          progressMs = Math.min(progressMs + skipAmount, durationMs);
           frameIndex = timestampToFrameSaturate(progressMs);
         }
         break;
@@ -209,7 +209,7 @@
         if (e.shiftKey) {
           decFrame();
         } else {
-          progressMs = addWraparound(progressMs, -skipAmount, durationMs);
+          progressMs = Math.max(progressMs - skipAmount, 0);
           frameIndex = timestampToFrameSaturate(progressMs);
         }
         break;
