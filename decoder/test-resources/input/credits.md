@@ -10,6 +10,7 @@
 - `interlaced.gif`: [Agnes Monkelbaan](<https://commons.wikimedia.org/wiki/File:Zernez,_Unterengadin,_Graub%C3%BCnden._20-09-2023._(actm.)_31.jpg>), [CC BY-SA 4.0], via Wikimedia Commons
 - `interlaced2.gif`: [Antonino Vara](https://commons.wikimedia.org/wiki/File:A_weather_balloon_exploding,_slow_motion.gif), [CC BY-SA 4.0], via Wikimedia Commons
 - `local-color-table.gif`: [GDallimore](https://commons.wikimedia.org/wiki/File:SmallFullColourGIF.gif), [CC BY-SA 3.0], via Wikimedia Commons
+- `truncated-frame.gif`: [Raphaelaugusto](https://commons.wikimedia.org/wiki/File:Reaction-Diffusion.gif), [CC BY-SA 4.0], via Wikimedia Commons
 
 [CC BY-SA 3.0]: http://creativecommons.org/licenses/by-sa/3.0/
 [CC BY-SA 4.0]: https://creativecommons.org/licenses/by-sa/4.0

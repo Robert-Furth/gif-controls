@@ -75,6 +75,10 @@ mod valid_gifs {
 }
 
 mod invalid_gifs {
+    use std::io;
+
+    use gif_controls_decoder::DecodeError;
+
     use crate::util::*;
 
     /// Ensure the decoder doesn't crash if a frame has neither a global nor local color table
@@ -82,6 +86,20 @@ mod invalid_gifs {
     pub fn no_crash_on_missing_color_table() {
         if let Err(e) = read_gif_file(test_input("earth-bad-color-table.gif")) {
             panic!("Unexpected error: {}", e);
+        }
+    }
+
+    /// Current behavior for truncated frames is to throw an error. This might change in the future.
+    #[test]
+    pub fn truncated_frame() {
+        // if let Err(DecodeError::IO(io::ErrorKind::UnexpectedEof));
+        match read_gif_file(test_input("truncated-frame.gif")) {
+            Err(DecodeError::IO(ioe)) => match ioe.kind() {
+                io::ErrorKind::UnexpectedEof => {}
+                _ => panic!("Unexpected IO error: {:?}", ioe),
+            },
+            Err(e) => panic!("Unexpected error kind: {:?}", e),
+            Ok(_) => panic!("Unexpected success"),
         }
     }
 }
