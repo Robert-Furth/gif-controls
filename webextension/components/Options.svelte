@@ -4,6 +4,7 @@
 
   import type { OpenOptionsMessage } from "@/lib/messages";
   import type { CounterType } from "@/lib/options";
+  import { swallowEvents } from "@/lib/utils";
 
   type Props = {
     speedFactor: number;
@@ -19,15 +20,19 @@
     ...rest
   }: Props = $props();
 
-  function openOptions(e: Event) {
-    e.preventDefault();
-    if (e instanceof KeyboardEvent && e.key !== "Enter") return;
-
+  function openOptionsPage(e: Event) {
+    swallowEvents(e);
     browser.runtime.sendMessage({ name: "open-options" } satisfies OpenOptionsMessage);
   }
 </script>
 
-<div transition:slide={{ axis: "y" }} class="options-dropdown" {...rest}>
+<div
+  transition:slide={{ axis: "y" }}
+  class="options-dropdown"
+  onkeydown={swallowEvents}
+  onclick={swallowEvents}
+  {...rest}
+>
   <div class="right">Speed:</div>
   <div class="speed-control">
     <input type="range" min="0.25" max="2" step="0.25" bind:value={speedFactor} />
@@ -46,5 +51,5 @@
     >Lock Size &amp; Position: <input type="checkbox" bind:checked={lockPosition} /></label
   >
   <!-- svelte-ignore a11y_invalid_attribute -->
-  <a class="span" href="#" onclick={openOptions} onkeypress={openOptions}>Extension Options...</a>
+  <a class="span" href="#" onclick={openOptionsPage}>Extension Options...</a>
 </div>

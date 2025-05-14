@@ -11,6 +11,7 @@
 
   import { type Gif } from "@/lib/gif";
   import { type CounterType, opts, watchOption } from "@/lib/options";
+  import { swallowEvents } from "@/lib/utils";
 
   import IconButton from "./IconButton.svelte";
   import MoveHandle from "./MoveHandle.svelte";
@@ -192,8 +193,7 @@
   }
 
   function onkeydown(this: HTMLElement, e: KeyboardEvent) {
-    if (e.target !== this) return;
-    e.stopPropagation();
+    swallowEvents(e);
 
     switch (e.key) {
       case "ArrowRight": {
@@ -215,30 +215,11 @@
         break;
       }
       case " ": {
-        if (!e.repeat) isPaused = !isPaused;
+        if (!e.repeat && !(e.target instanceof HTMLButtonElement)) isPaused = !isPaused;
         break;
       }
       default:
         return;
-    }
-
-    e.preventDefault();
-  }
-
-  function stopEvent(e: Event) {
-    e.stopPropagation();
-
-    const allowDefault =
-      e.type === "click" &&
-      ((e.target instanceof HTMLInputElement && e.target.type === "checkbox") ||
-        e.target instanceof HTMLAnchorElement);
-    if (!allowDefault) {
-      e.preventDefault();
-    }
-
-    // Clicking a label attached to a control should still activate that control
-    if (e.type === "click" && e.target instanceof HTMLLabelElement && e.target.control !== null) {
-      e.target.control.click();
     }
   }
 </script>
@@ -251,11 +232,10 @@
   style:height="{curHeight}px"
   style:left="{offsX}px"
   style:top="{offsY}px"
-  onclick={stopEvent}
-  onkeypress={stopEvent}
+  onclick={swallowEvents}
+  {onkeydown}
 >
-  <canvas tabindex="0" {onkeydown} onclick={() => (isPaused = !isPaused)} bind:this={canvas}
-  ></canvas>
+  <canvas tabindex="0" onclick={() => (isPaused = !isPaused)} bind:this={canvas}></canvas>
   <div class={["player-controls", "controls-top", forceShow && "force-show"]}>
     <IconButton title="Revert" src={iconRevert} onclick={unmount} style="padding: 2px 2px 1px" />
     <div>
@@ -301,7 +281,6 @@
       bind:val={progressMs}
       max={durationMs}
       editable={isAnimated}
-      {onkeydown}
       aria-label="Seek"
       aria-value=""
       onScrub={() => {
