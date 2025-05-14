@@ -92,7 +92,6 @@ mod invalid_gifs {
     /// Current behavior for truncated frames is to throw an error. This might change in the future.
     #[test]
     pub fn truncated_frame() {
-        // if let Err(DecodeError::IO(io::ErrorKind::UnexpectedEof));
         match read_gif_file(test_input("truncated-frame.gif")) {
             Err(DecodeError::IO(ioe)) => match ioe.kind() {
                 io::ErrorKind::UnexpectedEof => {}
