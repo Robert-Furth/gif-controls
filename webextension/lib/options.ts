@@ -6,7 +6,7 @@ export type CounterType = "frame" | "time" | "none";
 
 export const opts = {
   defaultCounterType: storage.defineItem<CounterType>("local:opt:defaultCounterType", {
-    fallback: "frame",
+    fallback: "time",
   }),
 
   minPlayerWidth: storage.defineItem<number>("local:opt:minWidth", {

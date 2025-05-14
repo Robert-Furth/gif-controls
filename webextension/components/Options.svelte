@@ -41,8 +41,8 @@
   <div class="right">Counter:</div>
   <div>
     <select bind:value={counterType}>
-      <option value="frame">Frame</option>
       <option value="time">Time</option>
+      <option value="frame">Frame</option>
       <option value="none">None</option>
     </select>
   </div>
