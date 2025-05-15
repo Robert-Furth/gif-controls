@@ -4,6 +4,31 @@ A browser extension to add playback controls to GIFs.
 
 ## Building from Source
 
+Use Docker if you want to ensure that the generated extension is exactly the same as the one
+submitted to Firefox Addons or the Chrome Web store.
+
+With either method, the built extension will be placed in `.output/<browser>-<manifestVersion>/`.
+For Firefox, that's `.output/firefox-mv2/`; for Chrome, it's `.output/chrome-mv3/`.
+
+### With Docker
+
+First, build the Docker image:
+
+```bash
+docker build -t gif-controls-build ./build
+```
+
+Once that's done, build the extension:
+
+```bash
+# All tail args will be passed to `make`, so you can provide any target specified in the Makefile
+# after `gif-controls-build`. For instance, provide `firefox` to build just the Firefox version, or
+# `zip` for the zipped extension & its sources.
+docker run --rm -v "${PWD}:/source" gif-controls-build
+```
+
+### Without Docker
+
 Requirements:
 
 - Rust (`rustc` v1.83.0 or higher)
@@ -11,7 +36,7 @@ Requirements:
 - NodeJS v18 or higher
 - `make`
 
-Run:
+Once you've installed all those,
 
 ```bash
 make firefox  # To generate the Firefox version of the extension
@@ -21,8 +46,5 @@ make chrome   # To generate the Chrome version of the extension
 Or, to generate both versions:
 
 ```bash
-make all  # Or just `make`
+make  # Or `make all`
 ```
-
-The built extension will be in `.output/<browser>-<manifestVersion>/`. For
-Firefox, that's `.output/firefox-mv2/`; for Chrome, it's `.output/chrome-mv3/`.
