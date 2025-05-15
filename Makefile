@@ -67,4 +67,4 @@ zip-sources: .output/sources.zip
 zip-firefox: .output/firefox-mv2.zip
 zip-chrome: .output/chrome-mv3.zip
 .output/%.zip: .output/%
-	cd .output && $(ZIP) $(notdir $@) $(notdir $<)
+	cd $< && $(ZIP) ../$(notdir $@) .
