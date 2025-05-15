@@ -18,10 +18,13 @@ foreach ($filename in $args[1..$args.length]) {
 
 $TargetFiles = $TargetFiles | Sort-Object | Get-Unique
 
+if (Test-Path $ZipName) {
+  Remove-Item $ZipName
+}
+
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-Remove-Item $ZipName
 $zip = [System.IO.Compression.ZipFile]::Open(($ZipName), [System.IO.Compression.ZipArchiveMode]::Create)
 foreach ($filename in $TargetFiles) {
   if (Test-Path $filename -PathType Container) {
