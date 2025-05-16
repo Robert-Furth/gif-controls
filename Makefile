@@ -13,6 +13,9 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 all: firefox chrome
 clean: clean-decoder clean-extension
 
+clobber: clean
+	-$(RM) node_modules
+
 #################
 # Decoder rules #
 #################
@@ -50,7 +53,6 @@ node_modules: package.json package-lock.json
 clean-extension:
 	-npx --no-install wxt clean
 	-$(RM) .output
-	-$(RM) node_modules
 
 ########
 # Zips #
