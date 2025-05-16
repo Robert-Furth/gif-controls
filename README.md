@@ -2,6 +2,29 @@
 
 A browser extension to add playback controls to GIFs.
 
+- [Features](#features)
+- [Building from Source](#building-from-source)
+  - [with Docker](#with-docker)
+  - [without Docker](#without-docker)
+
+## Features
+
+Right-click any GIF on a page and select "Add Controls":
+
+![Right-clicking on a GIF brings up a context menu to add controls to it](docs/images/add-controls.gif)
+
+Scrub, pause, and go frame-by-frame with the controls at the bottom:
+
+![Use the controls at left to pause, unpause, and go frame-by-frame](docs/images/playpause.gif) ![Click-drag on the scrub bar to scrub through the GIF](docs/images/scrubbing.gif)
+
+Adjust the playback speed, play the GIF in reverse, and more:
+
+![The options menu lets you adjust player settings like the playback speed](docs/images/options.gif)
+
+Resize and move the GIF:
+
+![Click-drag on the handles to move or resize the GIF](docs/images/move-resize.gif)
+
 ## Building from Source
 
 Use Docker if you want to ensure that the generated extension is exactly the same as the one
