@@ -2,11 +2,9 @@
   import iconRevert from "@/assets/player-icons/revert.svg";
 
   import { browser } from "#imports";
-  import { onDestroy } from "svelte";
 
-  import type { WorkerInput, WorkerOutput } from "@/entrypoints/worker";
-  import { DECODE_WORKER_PATH, WASM_NAME } from "@/lib/constants";
-  import { type Gif, prepareImageData } from "@/lib/gif";
+  import { WASM_NAME } from "@/lib/constants";
+  import { decodeInBackground, prepareImageData } from "@/lib/gif";
 
   import IconButton from "./IconButton.svelte";
   import Player from "./Player.svelte";
@@ -21,18 +19,6 @@
 
   let stateText = $state("Loading...");
 
-  let worker: Worker;
-  let objectUrl: string;
-
-  onDestroy(() => {
-    if (worker !== undefined) {
-      worker.terminate();
-    }
-    if (objectUrl !== undefined) {
-      URL.revokeObjectURL(objectUrl);
-    }
-  });
-
   const loadingBackground = (color: string) =>
     `linear-gradient(${color}, ${color}), url("${source}")`;
 
@@ -43,40 +29,12 @@
     const bytes = await response.bytes();
 
     stateText = "Decoding...";
-    const gif = await decodeInWorker(bytes);
+    const gif = await decodeInBackground(bytes, browser.runtime.getURL(`/${WASM_NAME}`));
 
     stateText = "Processing...";
     const frameArr = await prepareImageData(gif);
 
     return { gif, frameArr };
-  }
-
-  async function decodeInWorker(bytes: Uint8Array): Promise<Gif> {
-    // Get around an *old* chrome issue: https://issues.chromium.org/issues/41098022
-    const r = await fetch(browser.runtime.getURL(DECODE_WORKER_PATH));
-    const blob = new Blob([await r.text()], { type: "text/javascript" });
-    objectUrl = URL.createObjectURL(blob);
-    worker = new Worker(objectUrl);
-
-    return new Promise<Gif>((resolve, reject) => {
-      worker.onmessage = (e: MessageEvent<WorkerOutput>) => {
-        switch (e.data.type) {
-          case "ok":
-            resolve(e.data.output);
-            break;
-          case "error":
-            reject(e.data.error);
-            break;
-          default:
-            reject(new Error("unexpected message!"));
-        }
-      };
-
-      worker.postMessage({
-        wasm_path: browser.runtime.getURL(`/${WASM_NAME}`),
-        bytes,
-      } satisfies WorkerInput);
-    });
   }
 </script>
 

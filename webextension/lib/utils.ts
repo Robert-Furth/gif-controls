@@ -32,10 +32,17 @@ function targetHasDefault(e: Event): boolean {
   return false;
 }
 
+/** Stops an event from propagating, and only allows default behavior if the event target has
+ * default behavior. */
 export function swallowEvents(e: Event) {
   e.stopPropagation();
 
   if (!targetHasDefault(e)) {
     e.preventDefault();
   }
+}
+
+export function createBlobUrl(ui8a: Uint8Array): string {
+  const blob = new Blob([ui8a], { type: "application/octet-stream" });
+  return URL.createObjectURL(blob);
 }

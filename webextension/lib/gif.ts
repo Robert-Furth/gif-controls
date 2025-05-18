@@ -1,16 +1,24 @@
+import { browser } from "#imports";
+
 import init, { decode as wasmDecode } from "@@/decoder/pkg/gif_controls_decoder";
 
-export type Frame = {
-  imageData: Uint8Array;
-  delay: number;
-};
+import { isMessage, Message } from "./messages";
+import { createBlobUrl } from "./utils";
 
-export type Gif = {
+type FrameCommon = { delay: number };
+
+export type Frame = FrameCommon & { imageData: Uint8Array };
+export type SerializedFrame = FrameCommon & { blobUrl: string };
+
+export type GifMeta = {
   canvasWidth: number;
   canvasHeight: number;
   maxLoops?: number;
   numFrames: number;
   bgColor: string;
+};
+
+export type Gif = GifMeta & {
   frames: Frame[];
 };
 
@@ -46,7 +54,7 @@ export async function prepareImageData(gif: Gif): Promise<ImageData[]> {
        * content script is different from the canvas, so `ctx.putImageData()` fails. Solution is
        * use `window.Uint8ClampedArray`, copying the data over using `Blob`s (MUCH faster than JS
        * arrays). */
-      const blob = new Blob([frame.imageData], { type: "octet/stream" });
+      const blob = new Blob([frame.imageData], { type: "application/octet-stream" });
       ui8ca = new window.self.Uint8ClampedArray(await blob.arrayBuffer());
     } else {
       ui8ca = new window.self.Uint8ClampedArray(frame.imageData);
@@ -55,4 +63,38 @@ export async function prepareImageData(gif: Gif): Promise<ImageData[]> {
     frameArr.push(new ImageData(ui8ca, gif.canvasWidth, gif.canvasHeight));
   }
   return frameArr;
+}
+
+async function deserializeFrames(frames: SerializedFrame[]): Promise<Frame[]> {
+  const promises = frames.map(async (frame) => ({
+    delay: frame.delay,
+    imageData: await fetch(frame.blobUrl)
+      .then((response) => response.bytes())
+      .finally(() => URL.revokeObjectURL(frame.blobUrl)),
+  }));
+
+  return await Promise.all(promises);
+}
+
+export async function decodeInBackground(arr: Uint8Array, wasm_path: string): Promise<Gif> {
+  const message: Message = import.meta.env.FIREFOX
+    ? { name: "decode-request-ui8a", content: arr, wasm_path }
+    : { name: "decode-request-blob-url", target: "background", url: createBlobUrl(arr), wasm_path };
+
+  const response: unknown = await browser.runtime.sendMessage(message);
+  if (!isMessage(response)) throw new Error("Unexpected response");
+
+  switch (response.name) {
+    case "decode-response-error":
+      throw new Error(response.error);
+
+    case "decode-response-ui8a":
+      return response.gif;
+
+    case "decode-response-blob-url":
+      return { ...response.meta, frames: await deserializeFrames(response.frames) };
+
+    default:
+      throw new Error("Unexpected response");
+  }
 }

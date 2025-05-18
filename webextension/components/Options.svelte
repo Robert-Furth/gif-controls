@@ -2,7 +2,7 @@
   import { browser } from "#imports";
   import { slide } from "svelte/transition";
 
-  import type { OpenOptionsMessage } from "@/lib/messages";
+  import type { Message } from "@/lib/messages";
   import type { CounterType } from "@/lib/options";
   import { swallowEvents } from "@/lib/utils";
 
@@ -22,7 +22,7 @@
 
   function openOptionsPage(e: Event) {
     swallowEvents(e);
-    browser.runtime.sendMessage({ name: "open-options" } satisfies OpenOptionsMessage);
+    void browser.runtime.sendMessage({ name: "open-options" } satisfies Message);
   }
 </script>
 
