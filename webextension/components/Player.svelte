@@ -171,15 +171,6 @@
     return secsStr;
   }
 
-  /** Adds `a + b % mod`, wrapping around if a + b is negative. */
-  function addWraparound(a: number, b: number, mod: number): number {
-    let intermediate = (a + b) % mod;
-    if (intermediate < 0) {
-      return mod + intermediate;
-    }
-    return intermediate;
-  }
-
   /* EVENTS */
 
   function incFrame() {
