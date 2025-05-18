@@ -59,15 +59,21 @@ Requirements:
 - NodeJS v18 or higher
 - `make`
 
-Once you've installed all those,
+Once you've installed all those, run:
+
+```bash
+make all  # Or just `make`
+```
+
+Or, to build the extension for a specific browser:
 
 ```bash
 make firefox  # To generate the Firefox version of the extension
 make chrome   # To generate the Chrome version of the extension
 ```
 
-Or, to generate both versions:
+Or, to zip the built extensions and sources:
 
 ```bash
-make  # Or `make all`
+make zip  # zip-firefox for FF only, zip-chrome for Chrome only
 ```
