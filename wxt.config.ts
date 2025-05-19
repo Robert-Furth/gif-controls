@@ -11,11 +11,11 @@ export default defineConfig({
 
   imports: false,
 
-  manifest: ({ browser }) => ({
+  manifest: ({ browser, manifestVersion }) => ({
     name: "Gif Controls",
     permissions:
       browser === "firefox" ? ["menus", "storage"] : ["contextMenus", "storage", "offscreen"],
-    host_permissions: ["<all_urls>"],
+    host_permissions: manifestVersion === 2 ? ["<all_urls>"] : undefined,
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'",
     },
