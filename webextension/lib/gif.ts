@@ -44,25 +44,24 @@ export async function decode(arr: Uint8Array, wasm_path: string): Promise<Gif> {
 }
 
 export async function prepareImageData(gif: Gif): Promise<ImageData[]> {
-  const frameArr: ImageData[] = [];
-
-  for (const frame of gif.frames) {
-    let ui8ca: Uint8ClampedArray;
-    if (import.meta.env.FIREFOX) {
-      /* Because of security context BS in Firefox (not Chrome, oddly enough), I can't just create
-       * an `ImageData` directly from `gif.frame(i).imageData`; the security context of the
-       * content script is different from the canvas, so `ctx.putImageData()` fails. Solution is
-       * use `window.Uint8ClampedArray`, copying the data over using `Blob`s (MUCH faster than JS
-       * arrays). */
-      const blob = new Blob([frame.imageData], { type: "application/octet-stream" });
-      ui8ca = new window.self.Uint8ClampedArray(await blob.arrayBuffer());
-    } else {
-      ui8ca = new window.self.Uint8ClampedArray(frame.imageData);
-    }
-
-    frameArr.push(new ImageData(ui8ca, gif.canvasWidth, gif.canvasHeight));
+  if (import.meta.env.FIREFOX) {
+    /* Because of security context BS in Firefox (not Chrome, oddly enough), I can't just create an
+     * `ImageData` directly from `gif.frame(i).imageData`; the security context of the content
+     * script is different from the canvas, so `ctx.putImageData()` fails. Solution is use
+     * `window.Uint8ClampedArray`, copying the data over using `Blob`s (MUCH faster than JS arrays).
+     * */
+    const promises = gif.frames.map(async ({ imageData }) => {
+      const blob = new Blob([imageData], { type: "application/octet-stream" });
+      const ui8ca = new window.self.Uint8ClampedArray(await blob.arrayBuffer());
+      return new ImageData(ui8ca, gif.canvasWidth, gif.canvasHeight);
+    });
+    return await Promise.all(promises);
+  } else {
+    return gif.frames.map((frame) => {
+      const ui8ca = new window.self.Uint8ClampedArray(frame.imageData);
+      return new ImageData(ui8ca, gif.canvasWidth, gif.canvasHeight);
+    });
   }
-  return frameArr;
 }
 
 async function deserializeFrames(frames: SerializedFrame[]): Promise<Frame[]> {
