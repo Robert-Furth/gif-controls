@@ -11,9 +11,8 @@ source "$HOME/.cargo/env"
 eval "$(fnm env --use-on-cd --shell bash)"
 
 cd /source
-make "$@"
+make "$@" || ret=$?
 
-if [[ -d .output ]]; then
-  dir_owner="$(stat -c '%u' .)"
-  chown -R "$dir_owner" .output
-fi
+dir_owner="$(stat -c '%u' .)"
+chown -R "$dir_owner" .
+exit $ret

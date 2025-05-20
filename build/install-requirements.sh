@@ -14,10 +14,10 @@ sudo apt-get install -y build-essential curl zip unzip
 
 unset -f sudo
 
-# Install rust 1.86.0
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# Install rust 1.86.0 and the wasm32-unknown-unknown toolchain
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs |
+  sh -s -- -y -t wasm32-unknown-unknown --default-toolchain 1.86.0
 source "$HOME/.cargo/env"
-rustup default 1.86.0
 
 # Install node 22 via FNM
 cargo install fnm
