@@ -27,8 +27,8 @@ Resize and move the GIF:
 
 ## Building from Source
 
-Use Docker if you want to ensure that the generated extension is exactly the same as the one
-submitted to Firefox Addons or the Chrome Web store.
+Use Docker if you want to ensure that the generated extension is exactly the same as the one (soon
+to be) submitted to Firefox Addons or the Chrome Web store.
 
 With either method, the built extension will be placed in `.output/<browser>-<manifestVersion>/`.
 For Firefox, that's `.output/firefox-mv2/`; for Chrome, it's `.output/chrome-mv3/`.
