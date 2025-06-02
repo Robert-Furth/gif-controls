@@ -62,7 +62,7 @@ clean-extension:
 zip: zip-sources zip-firefox zip-chrome
 
 zip-sources: .output/sources.zip
-.output/sources.zip: $(DECODER_SOURCES) $(EXTENSION_SOURCES) $(wildcard *.*) build Makefile
+.output/sources.zip: $(DECODER_SOURCES) $(EXTENSION_SOURCES) $(wildcard *.*) build/* Makefile LICENSE
 	-mkdir .output
 	$(ZIP) $@ $^
 
