@@ -8,6 +8,7 @@
 
   import IconButton from "./IconButton.svelte";
   import Player from "./Player.svelte";
+  import BackgroundImage from "./BackgroundImage.svelte";
 
   type Props = {
     source: string;
@@ -19,11 +20,9 @@
 
   let stateText = $state("Loading...");
 
-  const loadingBackground = (color: string) =>
-    `linear-gradient(${color}, ${color}), url("${source}")`;
-
   async function loadGif() {
     const response = await fetch(source);
+
     if (!response.ok)
       throw new Error(`Could not fetch image: ${response.status} ${response.statusText}`);
     const bytes = await response.bytes();
@@ -45,16 +44,16 @@
 {/snippet}
 
 {#await loadGif()}
-  <div class="bgimg" style:background-image={loadingBackground("#666c")}>
+  <BackgroundImage width={defaultWidth} height={defaultHeight} url={source} overlay="#666c">
     {stateText}
     {@render revertButton()}
-  </div>
+  </BackgroundImage>
 {:then result}
   <Player {...result} {unmount} {defaultWidth} {defaultHeight} />
 {:catch e}
-  <div class="bgimg" style:background-image={loadingBackground("#a008")}>
+  <BackgroundImage width={defaultWidth} height={defaultHeight} url={source} overlay="#a008">
     <div>Error!</div>
     <div>{e?.message ?? e}</div>
     {@render revertButton()}
-  </div>
+  </BackgroundImage>
 {/await}
