@@ -46,16 +46,17 @@
       </div>
       <div class="desc">The minimum width and height of the player in pixels.</div>
       <div class="control">
-        <label for="min-frame-delay">Minimum frame delay:</label>
-        <span><input type="number" min="0" id="min-frame-delay" /></span>
+        <label for="default-frame-delay">Default frame duration:</label>
+        <span><input type="number" min="0" step="0.01" id="default-frame-delay" /></span>
       </div>
       <div class="reset">
-        <button id="reset-min-frame-delay" title="Reset to default">
+        <button id="reset-default-frame-delay" title="Reset to default">
           <img src="../../assets/reset.svg" />
         </button>
       </div>
       <div class="desc">
-        The minimum amount of time between GIF frames, in hundredths of a second.
+        The default duration of a frame in seconds. Overrides a frame's original duration if that
+        duration is between 0 and 0.01 seconds.
       </div>
     </div>
     <div class="opt-section">

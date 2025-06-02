@@ -135,6 +135,12 @@ function toNonnegativeInt(v: string): number | undefined {
   return Number.parseInt(v, 10);
 }
 
+function toNonnegative(v: string): number | undefined {
+  const s = v.trim();
+  if (!/^(\d+|\d*\.\d+|\d+\.\d*)$/.test(s)) return undefined;
+  return Number.parseFloat(s);
+}
+
 bindOption({
   elementId: "default-counter-type",
   resetId: "reset-counter-type",
@@ -156,11 +162,11 @@ bindOption({
   invalidMessage: "Must be a nonnegative whole number.",
 });
 bindOption({
-  elementId: "min-frame-delay",
-  resetId: "reset-min-frame-delay",
-  storageItem: opts.minFrameTime,
-  converter: toNonnegativeInt,
-  invalidMessage: "Must be a nonnegative whole number.",
+  elementId: "default-frame-delay",
+  resetId: "reset-default-frame-delay",
+  storageItem: opts.defaultFrameTime,
+  converter: toNonnegative,
+  invalidMessage: "Must be a nonnegative number.",
 });
 bindCheckbox({
   elementId: "lock-size-and-pos",

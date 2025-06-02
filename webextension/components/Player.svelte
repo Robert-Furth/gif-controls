@@ -44,12 +44,18 @@
   let reverse = $state(false);
   let lockPosition = $state(opts.defaultLockState.fallback);
 
-  let minDelay = watchOption(opts.minFrameTime);
+  let defaultDelay = watchOption(opts.defaultFrameTime);
 
   let timestamps = $derived.by(() => {
     const ts = [0];
     for (let i = 0; i < gif.numFrames; i++) {
-      const delay = Math.max(gif.frames[i].delay, $minDelay) * 10;
+      let delay;
+      const origDelay = gif.frames[i].delay;
+      if (origDelay === 0 || origDelay === 1) {
+        delay = Math.max(origDelay * 10, $defaultDelay * 1000);
+      } else {
+        delay = origDelay * 10;
+      }
       ts.push(ts[i] + delay);
     }
     return ts;

@@ -17,7 +17,7 @@ export const opts = {
     fallback: 60,
   }),
 
-  minFrameTime: storage.defineItem<number>("local:opt:minFrameTime", { fallback: 2 }),
+  defaultFrameTime: storage.defineItem<number>("local:opt:defaultFrameTime", { fallback: 0.1 }),
 
   defaultLockState: storage.defineItem<boolean>("local:opt:defaultPosAndSizeLock", {
     fallback: false,
