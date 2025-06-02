@@ -13,6 +13,6 @@ eval "$(fnm env --use-on-cd --shell bash)"
 cd /source
 make "$@" || ret=$?
 
-dir_owner="$(stat -c '%u' .)"
+dir_owner="$(stat -c '%u:%g' .)"
 chown -R "$dir_owner" .
 exit $ret
