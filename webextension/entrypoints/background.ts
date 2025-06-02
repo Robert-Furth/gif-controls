@@ -21,7 +21,7 @@ async function ensureOffscreenPage() {
     creating = browser.offscreen.createDocument({
       url: url,
       reasons: ["BLOBS"],
-      justification: "Decode GIF in the background",
+      justification: "Decode GIFs in the background",
     });
     await creating;
     creating = undefined;
@@ -29,14 +29,12 @@ async function ensureOffscreenPage() {
 }
 
 export default defineBackground(() => {
-  // Create menu on installation
-  browser.runtime.onInstalled.addListener(() => {
-    menus.create({
-      id: "add-gif-controls",
-      title: "Add Controls",
-      contexts: ["image"],
-      targetUrlPatterns: ["*://*/*.gif", "*://*/*.gif?*", "file://*/*.gif"],
-    });
+  // Create menu item
+  menus.create({
+    id: "add-gif-controls",
+    title: "Add Controls",
+    contexts: ["image"],
+    targetUrlPatterns: ["*://*/*.gif", "*://*/*.gif?*", "file://*/*.gif"],
   });
 
   // Clicking the menu item adds the controls
