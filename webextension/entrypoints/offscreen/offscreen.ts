@@ -1,6 +1,6 @@
 import { browser } from "#imports";
 
-import { decode, BlobUrlFrame } from "@/lib/gif";
+import { BlobUrlFrame, decode } from "@/lib/gif";
 import { isMessage, Message } from "@/lib/messages";
 import { createBlobUrl } from "@/lib/utils";
 

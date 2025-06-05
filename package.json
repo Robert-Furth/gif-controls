@@ -2,7 +2,7 @@
   "name": "gif-controls",
   "description": "Add playback controls to GIFs",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1dev",
   "type": "module",
   "scripts": {
     "dev:chrome": "wxt -b chrome",

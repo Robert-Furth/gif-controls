@@ -1,4 +1,4 @@
-import type { BlobFrame, GifMeta, BlobUrlFrame } from "./gif";
+import type { BlobFrame, BlobUrlFrame, GifMeta } from "./gif";
 
 type RightClickMessage = {
   name: "right-click";
