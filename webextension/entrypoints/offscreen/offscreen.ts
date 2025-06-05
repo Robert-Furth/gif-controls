@@ -1,6 +1,6 @@
 import { browser } from "#imports";
 
-import { decode, SerializedFrame } from "@/lib/gif";
+import { decode, BlobUrlFrame } from "@/lib/gif";
 import { isMessage, Message } from "@/lib/messages";
 import { createBlobUrl } from "@/lib/utils";
 
@@ -17,7 +17,7 @@ browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     .then((bytes) => decode(bytes, message.wasm_path))
     .then((gif) => {
       const { frames, ...meta } = gif;
-      const serializedFrames: SerializedFrame[] = frames.map((frame) => ({
+      const serializedFrames: BlobUrlFrame[] = frames.map((frame) => ({
         delay: frame.delay,
         blobUrl: createBlobUrl(frame.imageData),
       }));

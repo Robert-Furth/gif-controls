@@ -1,7 +1,7 @@
 import { browser, defineBackground } from "#imports";
 
 import { OFFSCREEN_PAGE_PATH } from "@/lib/constants";
-import { decode } from "@/lib/gif";
+import { BlobFrame, decode } from "@/lib/gif";
 import { isMessage, Message } from "@/lib/messages";
 import { menus } from "@/lib/utils";
 
@@ -55,20 +55,6 @@ export default defineBackground(() => {
     void browser.runtime.openOptionsPage();
   });
 
-  // "decode-request-ui8a" message (FF-only because only it can handle `Uint8Array`s in messages)
-  if (import.meta.env.FIREFOX) {
-    browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-      if (!isMessage(message) || message.name !== "decode-request-ui8a") return;
-
-      decode(message.content, message.wasm_path)
-        .then((gif) => sendResponse({ name: "decode-response-ui8a", gif } satisfies Message))
-        .catch((e) =>
-          sendResponse({ name: "decode-response-error", error: `${e}` } satisfies Message),
-        );
-      return true;
-    });
-  }
-
   // "decode-request-blob-url" message (relies on chrome's offscreen document functionality)
   if (import.meta.env.CHROME) {
     browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -84,6 +70,32 @@ export default defineBackground(() => {
           browser.runtime.sendMessage({ ...message, target: "offscreen" } satisfies Message),
         )
         .then(sendResponse)
+        .catch((e) =>
+          sendResponse({ name: "decode-response-error", error: `${e}` } satisfies Message),
+        );
+      return true;
+    });
+  }
+
+  // "decode-request-blob" message (FF-only because only it can handle `Blob`s in messages)
+  if (import.meta.env.FIREFOX) {
+    browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+      if (!isMessage(message) || message.name !== "decode-request-blob") return;
+
+      message.blob
+        .bytes()
+        .then((bytes) => decode(bytes, message.wasm_path))
+        .then(({ frames, ...meta }) => {
+          const blobFrames: BlobFrame[] = frames.map((frame) => ({
+            delay: frame.delay,
+            blob: new Blob([frame.imageData]),
+          }));
+          sendResponse({
+            name: "decode-response-blob",
+            meta,
+            frames: blobFrames,
+          } satisfies Message);
+        })
         .catch((e) =>
           sendResponse({ name: "decode-response-error", error: `${e}` } satisfies Message),
         );

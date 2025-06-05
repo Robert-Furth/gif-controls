@@ -8,7 +8,8 @@ import { createBlobUrl } from "./utils";
 type FrameCommon = { delay: number };
 
 export type Frame = FrameCommon & { imageData: Uint8Array };
-export type SerializedFrame = FrameCommon & { blobUrl: string };
+export type BlobUrlFrame = FrameCommon & { blobUrl: string };
+export type BlobFrame = FrameCommon & { blob: Blob };
 
 export type GifMeta = {
   canvasWidth: number;
@@ -51,7 +52,7 @@ export async function prepareImageData(gif: Gif): Promise<ImageData[]> {
      * `window.Uint8ClampedArray`, copying the data over using `Blob`s (MUCH faster than JS arrays).
      * */
     const promises = gif.frames.map(async ({ imageData }) => {
-      const blob = new Blob([imageData], { type: "application/octet-stream" });
+      const blob = new window.self.Blob([imageData], { type: "application/octet-stream" });
       const ui8ca = new window.self.Uint8ClampedArray(await blob.arrayBuffer());
       return new ImageData(ui8ca, gif.canvasWidth, gif.canvasHeight);
     });
@@ -64,7 +65,7 @@ export async function prepareImageData(gif: Gif): Promise<ImageData[]> {
   }
 }
 
-async function deserializeFrames(frames: SerializedFrame[]): Promise<Frame[]> {
+async function frameFromBlobUrlFrame(frames: BlobUrlFrame[]): Promise<Frame[]> {
   const promises = frames.map(async (frame) => ({
     delay: frame.delay,
     imageData: await fetch(frame.blobUrl)
@@ -75,9 +76,18 @@ async function deserializeFrames(frames: SerializedFrame[]): Promise<Frame[]> {
   return await Promise.all(promises);
 }
 
+async function frameFromBlobFrame(frames: BlobFrame[]): Promise<Frame[]> {
+  const promises = frames.map(async (frame) => ({
+    delay: frame.delay,
+    imageData: new Uint8Array(await frame.blob.arrayBuffer()),
+  }));
+
+  return await Promise.all(promises);
+}
+
 export async function decodeInBackground(arr: Uint8Array, wasm_path: string): Promise<Gif> {
   const message: Message = import.meta.env.FIREFOX
-    ? { name: "decode-request-ui8a", content: arr, wasm_path }
+    ? { name: "decode-request-blob", blob: new Blob([arr]), wasm_path }
     : { name: "decode-request-blob-url", target: "background", url: createBlobUrl(arr), wasm_path };
 
   const response: unknown = await browser.runtime.sendMessage(message);
@@ -87,11 +97,11 @@ export async function decodeInBackground(arr: Uint8Array, wasm_path: string): Pr
     case "decode-response-error":
       throw new Error(response.error);
 
-    case "decode-response-ui8a":
-      return response.gif;
-
     case "decode-response-blob-url":
-      return { ...response.meta, frames: await deserializeFrames(response.frames) };
+      return { ...response.meta, frames: await frameFromBlobUrlFrame(response.frames) };
+
+    case "decode-response-blob":
+      return { ...response.meta, frames: await frameFromBlobFrame(response.frames) };
 
     default:
       throw new Error("Unexpected response");

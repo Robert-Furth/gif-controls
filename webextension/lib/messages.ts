@@ -1,4 +1,4 @@
-import type { Gif, GifMeta, SerializedFrame } from "./gif";
+import type { BlobFrame, GifMeta, BlobUrlFrame } from "./gif";
 
 type RightClickMessage = {
   name: "right-click";
@@ -15,22 +15,29 @@ type DecodeRequestUi8aMessage = {
   wasm_path: string;
 };
 
-type DecodeResponseUi8aMessage = {
-  name: "decode-response-ui8a";
-  gif: Gif;
+type DecodeRequestBlobMessage = {
+  name: "decode-request-blob";
+  blob: Blob;
+  wasm_path: string;
 };
 
-type DecodeRequestBlobMessage = {
+type DecodeResponseBlobMessage = {
+  name: "decode-response-blob";
+  meta: GifMeta;
+  frames: BlobFrame[];
+};
+
+type DecodeRequestBlobUrlMessage = {
   name: "decode-request-blob-url";
   target: "background" | "offscreen";
   url: string;
   wasm_path: string;
 };
 
-type DecodeResponseBlobMessage = {
+type DecodeResponseBlobUrlMessage = {
   name: "decode-response-blob-url";
   meta: GifMeta;
-  frames: SerializedFrame[];
+  frames: BlobUrlFrame[];
 };
 
 type DecodeResponseErrorMessage = {
@@ -42,9 +49,10 @@ export type Message =
   | RightClickMessage
   | OpenOptionsMessage
   | DecodeRequestUi8aMessage
-  | DecodeResponseUi8aMessage
   | DecodeRequestBlobMessage
   | DecodeResponseBlobMessage
+  | DecodeRequestBlobUrlMessage
+  | DecodeResponseBlobUrlMessage
   | DecodeResponseErrorMessage;
 
 export function isMessage(m: unknown): m is Message {
