@@ -56,7 +56,7 @@ export default defineBackground(() => {
   });
 
   // "decode-request-blob-url" message (relies on chrome's offscreen document functionality)
-  if (import.meta.env.CHROME) {
+  if (!import.meta.env.FIREFOX) {
     browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (
         !isMessage(message) ||
