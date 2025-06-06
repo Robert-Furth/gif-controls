@@ -6,9 +6,9 @@
   import { WASM_NAME } from "@/lib/constants";
   import { decodeInBackground, prepareImageData } from "@/lib/gif";
 
+  import BackgroundImage from "./BackgroundImage.svelte";
   import IconButton from "./IconButton.svelte";
   import Player from "./Player.svelte";
-  import BackgroundImage from "./BackgroundImage.svelte";
 
   type Props = {
     source: string;
