@@ -2,6 +2,8 @@
 
 A browser extension to add playback controls to GIFs.
 
+**Install:** [Firefox](https://addons.mozilla.org/en-US/firefox/addon/gif-controls/) &bull; Chrome (coming soon!)
+
 - [Features](#features)
 - [Building from Source](#building-from-source)
   - [with Docker](#with-docker)
